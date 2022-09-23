@@ -33,11 +33,11 @@ int isSorted(Ref lists){
     if(isNil(lists) != 0){
         return 1;
     } else {
-        int oldLength = getLength((Ref)left(lists));
+        int leftLength = getLength((Ref)left(lists));
         if(isNil((Ref)right(lists)) == 0){
             Ref nextList = (Ref)left((Ref)right(lists));
-            int newLength = getLength(nextList);
-            if(oldLength <= newLength){
+            int rightLength = getLength(nextList);
+            if(leftLength <= rightLength){
                 return isSorted((Ref)right(lists));
             } else {
                 return 0;
