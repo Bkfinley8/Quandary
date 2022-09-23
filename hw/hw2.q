@@ -3,11 +3,10 @@ int isList(Q list) {
         if (isNil(list) != 0) {
             return 1;
         } else { 
-            return -1;
+            return 0;
         }    
     } else {
-        Ref sublist = (Ref)list;
-        return isList(right(sublist));
+        return isList(right((Ref)list));
     }
     return -1;
 }
@@ -34,15 +33,12 @@ int isSorted(Ref lists){
     if(isNil(lists) != 0){
         return 1;
     } else {
-        Ref examinedList = (Ref)left(lists);
-        int oldLength = getLength(examinedList);
-
-        Ref listsToGo = (Ref)right(lists);
-        if(isNil(listsToGo) == 0){
-            Ref nextList = (Ref)left(listsToGo);
+        int oldLength = getLength((Ref)left(lists));
+        if(isNil((Ref)right(lists)) == 0){
+            Ref nextList = (Ref)left((Ref)right(lists));
             int newLength = getLength(nextList);
             if(oldLength <= newLength){
-                return isSorted(listsToGo);
+                return isSorted((Ref)right(lists));
             } else {
                 return 0;
             }
@@ -59,9 +55,5 @@ int getLength(Ref l){
     } else {
         return 1 + getLength((Ref)right(l));
     }
-    return 0;
-}
-
-int main (int args){
-    return 1;
+    return -1;
 }
