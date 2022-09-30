@@ -39,11 +39,74 @@ precedence left TIMES;
 
 start with program;
 
-program ::= RETURN expr:e SEMI
-            {: RESULT = new Program(e, loc(eleft, eright)); :}
-         | expr:e
-            {: RESULT = new Program(e, loc(eleft, eright)); :}
+program ::= main:m
+            {: :}
          ;
+
+main ::= varDecl:vd main LCURLY stmtList:sl RCURLY
+            {: :}
+         ;
+
+varDecl ::= type:t IDENT:i
+            {: :}
+         ;
+
+type ::= INTTYPE
+            {: :}
+      | REFTYPE
+            {: :}
+      | QTYPE
+            {: :}
+      ;
+
+stmtList ::= stmt:s stmtList:sl
+            {: :}
+
+      |     /* epsilon */
+            {: :}
+      ;
+
+
+stmt ::= RETURN expr:e SEMI
+            {: RESULT = new Program(e, loc(eleft, eright)); :}
+      |  varDecl:vd EQUALS expr:e SEMI
+            {: :}
+      |  IF LPAREN cond:c RPAREN stmt:s
+            {: :}
+      |  IF LPAREN cond:c RPAREN stmt:s ELSE stmt:s
+            {: :}
+      |  PRINT expr:e SEMI
+            {: :}
+      | LCURLY stmtList:sl RCURLY
+            {: :}
+      ;
+
+cond ::= expr:c1 LESS_THAN_OR_EQUAL_TO expr:c2
+         {: :}
+      |  expr:c1 GREATER_THAN_OR_EQUAL_TO expr:c2
+         {: :}
+      |  expr:c1 EQUALITY_CHECK expr:c2
+         {: :}
+      |  expr:c1 NON_EQUALITY_CHECK expr:c2
+         {: :}
+      |  expr:c1 LESS_THAN expr:c2
+         {: :}
+      |  expr:c1 GREATER_THAN expr:c2
+         {: :}
+      |  cond:c1 BOOL_AND cond:c2
+         {: :}
+      |  cond:c1 BOOL_OR cond:c2
+         {: :}
+      |  BOOL_NOT cond:c
+         {: :}
+      |  LPAREN cond:c RPAREN
+         {: :}
+      ;
+
+      
+      
+      
+      
 
 expr ::= INTCONST:c
          {: RESULT = new ConstExpr(c, loc(cleft, cright)); :}
@@ -53,6 +116,8 @@ expr ::= INTCONST:c
          {: RESULT = e; :}
       |  MINUS expr:e
          {: RESULT = new UnaryExpr(e,loc(eleft, eright));:}
+      |  IDENT:i
+         {: :}
       ;
 
 binaryExpr ::= expr:e1 PLUS expr:e2
