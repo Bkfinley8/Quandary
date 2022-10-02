@@ -1,21 +1,18 @@
 package ast;
 
-import java.io.PrintStream;
+import java.util.List;
 
 public class Program extends ASTNode {
 
-    final Expr expr;
+    final VarDecl functionIdentifier;
+    final List<VarDecl> formalParameters;
+    final StatementList statements;
 
-    public Program(Expr expr, Location loc) {
+    public Program(VarDecl funcIdent, List<VarDecl> formalParams, List<Statement> statements, Location loc) {
         super(loc);
-        this.expr = expr;
+        this.functionIdentifier = funcIdent;
+        this.formalParameters = formalParams;
+        this.statements = new StatementList(statements, loc);
     }
 
-    public Expr getExpr() {
-        return expr;
-    }
-
-    public void println(PrintStream ps) {
-        ps.println(expr);
-    }
 }

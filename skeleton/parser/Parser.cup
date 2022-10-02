@@ -27,80 +27,99 @@ parser code {:
 
 :};
 
-terminal PLUS, MINUS, TIMES, LPAREN, RPAREN, RETURN, SEMI;
-terminal Long    INTCONST;
+terminal PLUS, MINUS, TIMES, LPAREN, RPAREN, RETURN, SEMI, INTTYPE, IF, ELSE, WHILE, LESS_THAN, LESS_THAN_OR_EQUAL_TO, GREATER_THAN, GREATER_THAN_OR_EQUAL_TO, DOUBLE_EQUALS, NOT_EQUALS, BOOL_NOT, BOOL_AND, BOOL_OR, EQUALS;
+
+
+terminal Long INTCONST;
+terminal String IDENT;
 
 non terminal Program         program;
+non terminal main            main; 
+non terminal varDecl         varDecl;
+non terminal type            type;
+non terminal stmtList        stmtList;
+non terminal stmt            stmt;
+non terminal cond            cond;
 non terminal Expr            expr;
 non terminal BinaryExpr      binaryExpr;
 
+
+precedence left IF;
+precedence left ELSE;
+precedence left BOOL_AND, BOOL_OR;
+precedence left BOOL_NOT;
+precedence left LESS_THAN_OR_EQUAL_TO, GREATER_THAN_OR_EQUAL_TO, DOUBLE_EQUALS, NOT_EQUALS, LESS_THAN, GREATER_THAN;
 precedence left PLUS, MINUS;
 precedence left TIMES;
 
 start with program;
 
-program ::= main:m
-            {: :}
+program ::= varDecl:v LPAREN formalDeclList:fdl RPAREN LBRACE statementList:sl RBRACE
+            {: RESULT = new Program(v, fdl, sl, loc(slleft, slright)); :}
          ;
 
-main ::= varDecl:vd main LCURLY stmtList:sl RCURLY
-            {: :}
-         ;
 
 varDecl ::= type:t IDENT:i
-            {: :}
+            {: RESULT = new VarDecl(t, i); :}
          ;
 
 type ::= INTTYPE
-            {: :}
-      | REFTYPE
-            {: :}
-      | QTYPE
-            {: :}
+            {: RESULT = VarDecl.INTTYPE;  :}
+      ;
+
+formalDeclList ::= neFormalDeclList:nefdl
+         {: RESULT = nefdl; :}
+      | /* epsilon */
+         {: RESULT = new ArrayList<VarDecl>(); :}
+      ;
+
+neFormalDeclList ::= varDecl:v COMMA neFormalDeclList:nefdl
+         {: nefdl.add(0, v); RESULT = nefdl; :}
+      | varDecl:v
+         {: List<VarDecl> formalDeclarations = new ArrayList<VarDecl>(); formalDeclarations.add(0, v); RESULT = formalDeclarations; :}
       ;
 
 stmtList ::= stmt:s stmtList:sl
-            {: :}
-
-      |     /* epsilon */
-            {: :}
+         {: sl.add(0, s); RESULT = sl; :}
+      |  /* epsilon */
+         {: RESULT = new ArrayList<Statement>(); :}
       ;
 
 
 stmt ::= RETURN expr:e SEMI
-            {: RESULT = new Program(e, loc(eleft, eright)); :}
+            {: RESULT = new ReturnStatement(e, loc(eleft, eright)); :}
       |  varDecl:vd EQUALS expr:e SEMI
-            {: :}
-      |  IF LPAREN cond:c RPAREN stmt:s
-            {: :}
-      |  IF LPAREN cond:c RPAREN stmt:s ELSE stmt:s
-            {: :}
+            {: RESULT = new VarDeclareStatement(vd, e, loc(vleft, vright)); :}
+      |  IF cond:c stmt:s
+            {: RESULT = new IfStatement(c, s, loc(cleft, cright)); :}
+      |  IF cond:c stmt:s ELSE stmt:s
+            {: RESULT = new IfElseStatement(c, s1, elseS, loc(cleft, cright)); :}
       |  PRINT expr:e SEMI
-            {: :}
+            {: RESULT = new PrintStatement(e, loc(eleft, eright)); :}
       | LCURLY stmtList:sl RCURLY
-            {: :}
+            {: RESULT = new StatementList(sl, loc(slleft, slright)); :}
       ;
 
 cond ::= expr:c1 LESS_THAN_OR_EQUAL_TO expr:c2
-         {: :}
+         {: RESULT = new CondEval(c1, CondEval.LESS_THAN_OR_EQUAL_TO, c2, loc(c1left, c1right)); :}
       |  expr:c1 GREATER_THAN_OR_EQUAL_TO expr:c2
-         {: :}
-      |  expr:c1 EQUALITY_CHECK expr:c2
-         {: :}
-      |  expr:c1 NON_EQUALITY_CHECK expr:c2
-         {: :}
+         {: RESULT = new CondEval(c1, CondEval.GREATER_THAN_OR_EQUAL_TO, c2, loc(c1left, c1right)); :}
+      |  expr:c1 DOUBLE_EQUALS expr:c2
+         {: RESULT = new CondEval(c1, CondEval.DOUBLE_EQUALS, c2, loc(c1left, c1right)); :}
+      |  expr:c1 NOT_EQUALS expr:c2
+         {: RESULT = new CondEval(c1, CondEval.NOT_EQUALS, c2, loc(c1left, c1right)); :}
       |  expr:c1 LESS_THAN expr:c2
-         {: :}
+         {: RESULT = new CondEval(c1, CondEval.LESS_THAN, c2, loc(c1left, c1right)); :}
       |  expr:c1 GREATER_THAN expr:c2
-         {: :}
+         {: RESULT = new CondEval(c1, CondEval.GREATER_THAN, c2, loc(c1left, c1right)); :}
       |  cond:c1 BOOL_AND cond:c2
-         {: :}
+         {: RESULT = new AndOR(c1, AndOR.BOOL_AND, c2, loc(c1left, c1right)); :}
       |  cond:c1 BOOL_OR cond:c2
-         {: :}
+         {: RESULT = new AndOR(c1, AndOR.BOOL_OR, c2, loc(c1left, c1right)); :}
       |  BOOL_NOT cond:c
-         {: :}
+         {: RESULT = new NotOP(NotOP.BOOL_NOT, c, loc(cleft, cright)); :}
       |  LPAREN cond:c RPAREN
-         {: :}
+         {: RESULT = c; :}
       ;
 
       
