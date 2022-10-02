@@ -57,3 +57,12 @@ int getLength(Ref l){
     }
     return -1;
 }
+
+/* Question 5
+
+Both recursion and if statemants are required for Quandary to be turing complete. For the example given, writing a factorial function, would be impossible to implement without both.
+To calculate a factorial, a repeated multiplcation must be performed n-1 times to arrive at the correct answer. If statemants are required to know when to stop multiplying and recursion
+is the only way to do the nessacary calculation due to the immuteability for this version of Quandary. Also, as seen by the implementations of the above methods, recursion and if 
+statements are required to properly implement those methods.
+
+*/
