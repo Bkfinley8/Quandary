@@ -54,8 +54,8 @@ precedence left TIMES;
 start with program;
 
 program ::= varDecl:v1 LPAREN varDecl:v2 RPAREN LCURLY stmtList:sl RCURLY
-         {: RESULT = new Program(v1, v2, sl, loc(slleft, slright)); :}
-      ;
+            {: RESULT = new Program(v1, v2, sl, loc(slleft, slright)); :}
+         ;
 
 
 stmtList ::= stmt:s stmtList:sl
@@ -122,9 +122,9 @@ expr ::= INTCONST:c
       ;
 
 binaryExpr ::= expr:e1 PLUS expr:e2
-            {: RESULT = new BinaryExpr(e1, BinaryExpr.PLUS, e2, loc(e1left, e1right)); :}
-         |  expr:e1 MINUS expr:e2
-            {: RESULT = new BinaryExpr(e1, BinaryExpr.MINUS, e2, loc(e1left, e1right)); :}
-         |  expr:e1 TIMES expr:e2
-            {: RESULT = new BinaryExpr(e1, BinaryExpr.TIMES, e2, loc(e1left, e1right)); :}
-         ;
+               {: RESULT = new BinaryExpr(e1, BinaryExpr.PLUS, e2, loc(e1left, e1right)); :}
+            |  expr:e1 MINUS expr:e2
+               {: RESULT = new BinaryExpr(e1, BinaryExpr.MINUS, e2, loc(e1left, e1right)); :}
+            |  expr:e1 TIMES expr:e2
+               {: RESULT = new BinaryExpr(e1, BinaryExpr.TIMES, e2, loc(e1left, e1right)); :}
+            ;

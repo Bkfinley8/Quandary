@@ -7,3 +7,4 @@ int main(int arg) {
     }
     return x + y + z;
 }
+grading

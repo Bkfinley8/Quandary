@@ -49,7 +49,6 @@ import interpreter.Interpreter;
 
 
 IntLiteral = 0 | [1-9][0-9]*
-StringLiteral = [_a-zA-Z][_a-zA-Z0-9]*
 
 new_line = \r|\n|\r\n;
 
@@ -87,8 +86,8 @@ white_space = {new_line} | [ \t\f]
 "="               { return symbol("=",  EQUALS); }
 
 
-
-{StringLiteral}   { return symbol("Ident", IDENT, new String(yytext())); }
+[_a-zA-Z][_a-zA-Z0-9]*
+                  { return symbol("Ident", IDENT, new String(yytext())); }
 
 
 /* comments */

@@ -1,6 +1,8 @@
 package ast;
 
-public class VarDecl extends ASTNode{
+public class VarDecl {
+
+    public static final int INTTYPE = 1;
 
     final int type;
     final String identifier;

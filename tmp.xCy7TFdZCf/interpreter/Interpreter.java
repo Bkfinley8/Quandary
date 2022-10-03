@@ -143,7 +143,7 @@ public class Interpreter {
             if(evalCondition(cond,varMap)){
                 lastReturn = executeStmt(ifStatement, lastReturn, varMap);
             } 
-        } else if(stmt instanceof IfElseStatement){
+        } else if( stmt instanceof IfElseStatement){
             IfElseStatement temp = (IfElseStatement) stmt;
             Condition cond = temp.getCondition();
             Statement ifStatement = temp.getIfStatement();
