@@ -18,4 +18,16 @@ public class CondEval extends Condition {
         this.operator = operator;
         this.expr2 = expr2;
     }
+
+    public Expr getExpr1(){
+        return this.expr1;
+    }
+
+    public Expr getExpr2(){
+        return this.expr2;
+    }
+
+    public int getOperator(){
+        return this.operator;
+    }
 }

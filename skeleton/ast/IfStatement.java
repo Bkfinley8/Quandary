@@ -9,4 +9,12 @@ public class IfStatement extends Statement{
         this.condition = cond;
         this.statement = statement;
     }
+
+    public Condition getCondition(){
+        return this.condition;
+    }
+
+    public Statement getStatement(){
+        return this.statement;
+    }
 }

@@ -1,6 +1,8 @@
 package interpreter;
 
 import java.io.*;
+import java.lang.Thread.State;
+import java.util.HashMap;
 import java.util.Random;
 
 import parser.ParserWrapper;
@@ -101,8 +103,99 @@ public class Interpreter {
         }
     }
 
-    Object executeRoot(Program astRoot, long arg) {
-        return evaluate(astRoot.getExpr());
+    String executeRoot(Program astRoot, long arg) {
+        String lastReturn = "";
+        HashMap<String, Integer> varMap = new HashMap<String, Integer>();
+        StatementList statements = astRoot.getStmtList();
+        lastReturn = executeStmtList(statements, lastReturn, varMap) ;
+        return lastReturn;
+    }
+
+    String executeStmtList(StatementList stmtList, String ret, HashMap<String, Integer> varMap){
+        for(int i = 0; i < stmtList.getSize();i++){
+            Statement stmt = stmtList.at(i);
+            ret = executeStmt(stmt, ret, varMap);
+        }
+
+        return ret;
+    }
+
+    String executeStmt(Statement stmt, String lastReturn, HashMap<String, Integer> varMap){
+        if(stmt instanceof VarDeclarationStatement){
+            VarDeclarationStatement temp = (VarDeclarationStatement)stmt;
+            VarDecl var = temp.getVarDecl();
+            Expr expr = temp.getExpr();
+
+            varMap.put(var.getIdentifier(),(Integer) evaluate(expr));
+        } else if(stmt instanceof PrintStatement){
+            PrintStatement temp = (PrintStatement) stmt;
+            Expr expr = temp.getExpr();
+            System.out.println(evaluate(expr));
+        } else if(stmt instanceof IfStatement){
+            IfStatement temp = (IfStatement) stmt;
+            Condition cond = temp.getCondition();
+            Statement ifStatement = temp.getStatement();
+            if(evalCondition(cond)){
+                executeStmt(ifStatement, lastReturn, varMap);
+            } 
+        } else if( stmt instanceof IfElseStatement){
+            IfElseStatement temp = (IfElseStatement) stmt;
+            Condition cond = temp.getCondition();
+            Statement ifStatement = temp.getIfStatement();
+            Statement elseStatement = temp.getElseStatement();
+            if(evalCondition(cond)){
+                executeStmt(ifStatement, lastReturn, varMap);
+            } else {
+                executeStmt(elseStatement, lastReturn, varMap);
+            }
+        } else if(stmt instanceof ReturnStatement){
+            ReturnStatement temp = (ReturnStatement) stmt;
+            Expr expr = temp.getExpr();
+            lastReturn = (String) evaluate(expr);
+        } else if(stmt instanceof StatementList){
+            StatementList temp = (StatementList) stmt;
+            lastReturn = executeStmtList(temp, lastReturn, varMap);
+        } else {
+            System.out.println("ERROR: SOMETHING WENT WWRONG");
+        }
+        return lastReturn;
+    }
+
+    boolean evalCondition(Condition cond){
+        if(cond instanceof NotOP){
+            NotOP temp = (NotOP) cond;
+            return !evalCondition(temp.getCondition());
+        } else if(cond instanceof AndOr){
+            AndOr temp = (AndOr) cond;
+            Condition cond1 = temp.getCondition1();
+            Condition cond2 = temp.getCondition2();
+            int op = temp.getOperator();
+            if(op == 1){
+                return evalCondition(cond1) && evalCondition(cond2);
+            } else {
+                return evalCondition(cond1) || evalCondition(cond2);
+            }
+        } else if(cond instanceof CondEval){
+            CondEval temp = (CondEval) cond;
+            Expr expr1 = temp.getExpr1();
+            Expr expr2 = temp.getExpr2();
+            int op = temp.getOperator();
+            if(op == 1){
+                return (Integer)evaluate(expr1) < (Integer)evaluate(expr2);
+            } else if (op == 2){
+                return (Integer)evaluate(expr1) <= (Integer)evaluate(expr2);
+            } else if (op == 3){
+                return (Integer)evaluate(expr1) > (Integer)evaluate(expr2);
+            } else if (op == 4){
+                return (Integer)evaluate(expr1) >= (Integer)evaluate(expr2);
+            } else if (op == 5){
+                return (Integer)evaluate(expr1) == (Integer)evaluate(expr2);
+            } else {
+                return (Integer)evaluate(expr1) != (Integer)evaluate(expr2);
+            }
+        }  else {
+            throw new RuntimeException("Unhandled Condition type");
+        }
     }
 
     Object evaluate(Expr expr) {

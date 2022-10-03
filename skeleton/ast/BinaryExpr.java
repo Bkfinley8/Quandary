@@ -18,15 +18,15 @@ public class BinaryExpr extends Expr {
     }
 
     public Expr getLeftExpr() {
-        return expr1;
+        return this.expr1;
     }
 
     public int getOperator() {
-        return operator;
+        return this.operator;
     }
     
     public Expr getRightExpr() {
-        return expr2;
+        return this.expr2;
     }
 
     @Override

@@ -7,4 +7,8 @@ public class ReturnStatement extends Statement{
         super(loc);
         this.expr = expr;
     }
+
+    public Expr getExpr(){
+        return this.expr;
+    }
 }

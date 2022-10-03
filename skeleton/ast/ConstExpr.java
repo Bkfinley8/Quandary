@@ -10,7 +10,7 @@ public class ConstExpr extends Expr {
     }
 
     public Object getValue() {
-        return value;
+        return this.value;
     }
 
     @Override

@@ -9,4 +9,13 @@ public class StatementList extends Statement{
         super(loc);
         this.statements = statements;
     }
+
+    public int getSize(){
+        return this.statements.size();
+    }
+
+    public Statement at(int idx){
+        return this.statements.get(idx);
+    }
+    
 }

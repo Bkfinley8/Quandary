@@ -68,6 +68,26 @@ white_space = {new_line} | [ \t\f]
 "*"               { return symbol("*",  TIMES); }
 "return"          { return symbol("return",  RETURN); }
 ";"               { return symbol(";",  SEMI); }
+"{"               { return symbol("{",  LCURLY); }
+"}"               { return symbol("}",  RCURLY); }
+"PRINT"               { return symbol("print",  PRINT); }
+"INTTYPE"               { return symbol("int",  INTTYPE); }
+"IF"               { return symbol("if",  IF); }
+"ELSE"               { return symbol("else",  ELSE); }
+"LESS_THAN"               { return symbol("<",  LESS_THAN); }
+"LESS_THAN_OR_EQUAL_TO"               { return symbol("<=",  LESS_THAN_OR_EQUAL_TO); }
+"GREATER_THAN"               { return symbol(">",  GREATER_THAN); }
+"GREATER_THAN_OR_EQUAL_TO"               { return symbol(">=",  GREATER_THAN_OR_EQUAL_TO); }
+"DOUBLE_EQUALS"               { return symbol("==",  DOUBLE_EQUALS); }
+"NOT_EQUALS"               { return symbol("!=",  NOT_EQUALS); }
+"BOOL_NOT"               { return symbol("!",  BOOL_NOT); }
+"BOOL_AND"               { return symbol("&&",  BOOL_AND); }
+"BOOL_OR"               { return symbol("||",  BOOL_OR); }
+"EQUALS"               { return symbol("",  EQUALS); }
+
+
+
+
 
 /* comments */
 "/*" [^*] ~"*/" | "/*" "*"+ "/"

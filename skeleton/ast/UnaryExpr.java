@@ -9,7 +9,7 @@ public class UnaryExpr extends Expr {
     }
 
     public Expr getExpr() {
-        return expr1;
+        return this.expr1;
     }
     
     @Override

@@ -5,14 +5,18 @@ import java.util.List;
 public class Program extends ASTNode {
 
     final VarDecl functionIdentifier;
-    final List<VarDecl> formalParameters;
+    final VarDecl args;
     final StatementList statements;
 
-    public Program(VarDecl funcIdent, List<VarDecl> formalParams, List<Statement> statements, Location loc) {
+    public Program(VarDecl funcIdent, VarDecl args, List<Statement> statements, Location loc) {
         super(loc);
         this.functionIdentifier = funcIdent;
-        this.formalParameters = formalParams;
+        this.args = args;
         this.statements = new StatementList(statements, loc);
+    }
+
+    public StatementList getStmtList(){
+        return this.statements;
     }
 
 }

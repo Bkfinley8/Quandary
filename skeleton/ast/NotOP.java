@@ -12,4 +12,7 @@ public class NotOP extends Condition {
         this.cond = cond;
     }
 
+    public Condition getCondition(){
+        return this.cond;
+    }
 }

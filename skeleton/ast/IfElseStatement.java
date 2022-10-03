@@ -3,13 +3,25 @@ package ast;
 public class IfElseStatement extends Statement {
 
     final Condition condition;
-    final Statement statement1;
+    final Statement ifstatement;
     final Statement elseStatement;
 
-    public IfElseStatement(Condition cond, Statement statement1, Statement elseStatement, Location loc) {
+    public IfElseStatement(Condition cond, Statement ifstatement, Statement elseStatement, Location loc) {
         super(loc);
         this.condition = cond;
-        this.statement1 = statement1;
+        this.ifstatement = ifstatement;
         this.elseStatement = elseStatement;
+    }
+
+    public Condition getCondition(){
+        return this.condition;
+    }
+
+    public Statement getIfStatement(){
+        return this.ifstatement;
+    }
+
+    public Statement getElseStatement(){
+        return this.elseStatement;
     }
 }

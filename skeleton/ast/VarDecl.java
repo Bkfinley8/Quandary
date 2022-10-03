@@ -11,4 +11,12 @@ public class VarDecl {
         this.type = type;
         this.identifier = ident;
     }
+
+    public int getType(){
+        return this.type;
+    }
+
+    public String getIdentifier(){
+        return this.identifier;
+    }
 }
