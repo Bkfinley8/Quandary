@@ -126,11 +126,15 @@ public class Interpreter {
         }
         */
         StatementList currentStatementList = stmtList;
-        while(currentStatementList.getStatement() != null){
+        while(!currentStatementList.isEmpty()){
             if(!this.hasReturned){
                 ret = executeStmt(currentStatementList.getStatement(), ret, varMap);
             }
-            currentStatementList = currentStatementList.getNextStatement();
+            if(currentStatementList.hasNext()){
+                currentStatementList = currentStatementList.getNextStatement();
+            } else {
+                break;
+            }
         }
 
         return ret;

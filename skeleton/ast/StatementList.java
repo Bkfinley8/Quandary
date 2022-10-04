@@ -37,5 +37,12 @@ public class StatementList extends Statement{
     public StatementList getNextStatement(){
         return this.nextList;
     }
+
+    public boolean isEmpty(){
+        return this.statement == null;
+    }
     
+    public boolean hasNext(){
+        return this.nextList != null;
+    }
 }
