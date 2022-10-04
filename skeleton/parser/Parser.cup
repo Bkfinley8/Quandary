@@ -27,7 +27,7 @@ parser code {:
 
 :};
 
-terminal PLUS, MINUS, TIMES, LPAREN, RPAREN, LCURLY, RCURLY, RETURN, PRINT, SEMI, INTTYPE, IF, ELSE, LESS_THAN, LESS_THAN_OR_EQUAL_TO, GREATER_THAN, GREATER_THAN_OR_EQUAL_TO, DOUBLE_EQUALS, NOT_EQUALS, BOOL_NOT, BOOL_AND, BOOL_OR, EQUALS;
+terminal PLUS, MINUS, TIMES, LPAREN, RPAREN, LCURLY, RCURLY, RETURN, PRINT, SEMI, INTTYPE, IF, ELSE, LESSTHAN, LESSTHANOREQUALTO, GREATERTHAN, GREATERTHANOREQUALTO, DOUBLEEQUALS, NOTEQUALS, NOT, AND, OR, EQUALS;
 
 
 terminal Long INTCONST;
@@ -38,16 +38,16 @@ non terminal Expr            expr;
 non terminal BinaryExpr      binaryExpr;
 non terminal Condition       cond;
 non terminal Statement       stmt;
-non terminal List<Statement> stmtList;
+non terminal StatementList   stmtList;
 non terminal VarDecl         varDecl;
 non terminal Integer         type;
 
 
 precedence left IF;
 precedence left ELSE;
-precedence left BOOL_AND, BOOL_OR;
-precedence left BOOL_NOT;
-precedence left LESS_THAN_OR_EQUAL_TO, GREATER_THAN_OR_EQUAL_TO, DOUBLE_EQUALS, NOT_EQUALS, LESS_THAN, GREATER_THAN;
+precedence left AND, OR;
+precedence left NOT;
+precedence left LESSTHANOREQUALTO, GREATERTHANOREQUALTO, DOUBLEEQUALS, NOTEQUALS, LESSTHAN, GREATERTHAN;
 precedence left PLUS, MINUS;
 precedence left TIMES;
 
@@ -57,13 +57,11 @@ program ::= varDecl:v1 LPAREN varDecl:v2 RPAREN LCURLY stmtList:sl RCURLY
          {: RESULT = new Program(v1, v2, sl, loc(slleft, slright)); :}
       ;
 
-
 stmtList ::= stmt:s stmtList:sl
-         {: sl.add(0, s); RESULT = sl; :}
-      |  /* epsilon */
-         {: RESULT = new ArrayList<Statement>(); :}
+         {: RESULT = new StatementList(s,sl,loc(sleft,sright)); :}
+      |  /* empty */
+         {: RESULT = null; :}      
       ;
-
 
 stmt ::= RETURN expr:e SEMI
          {: RESULT = new ReturnStatement(e, loc(eleft, eright)); :}
@@ -76,7 +74,7 @@ stmt ::= RETURN expr:e SEMI
       |  PRINT expr:e SEMI
          {: RESULT = new PrintStatement(e, loc(eleft, eright)); :}
       |  LCURLY stmtList:sl RCURLY
-         {: RESULT = new StatementList(sl, loc(slleft, slright)); :}
+         {: RESULT = sl; :}
       ;
 
 varDecl ::= type:t IDENT:i
@@ -87,23 +85,23 @@ type ::= INTTYPE
       {: RESULT = 1;  :}
    ;
 
-cond ::= expr:e1 LESS_THAN_OR_EQUAL_TO expr:e2
+cond ::= expr:e1 LESSTHANOREQUALTO expr:e2
          {: RESULT = new CondEval(e1, CondEval.LESS_THAN_OR_EQUAL_TO, e2, loc(e1left, e1right)); :}
-      |  expr:e1 GREATER_THAN_OR_EQUAL_TO expr:e2
+      |  expr:e1 GREATERTHANOREQUALTO expr:e2
          {: RESULT = new CondEval(e1, CondEval.GREATER_THAN_OR_EQUAL_TO, e2, loc(e1left, e1right)); :}
-      |  expr:e1 DOUBLE_EQUALS expr:e2
+      |  expr:e1 DOUBLEEQUALS expr:e2
          {: RESULT = new CondEval(e1, CondEval.DOUBLE_EQUALS, e2, loc(e1left, e1right)); :}
-      |  expr:e1 NOT_EQUALS expr:e2
+      |  expr:e1 NOTEQUALS expr:e2
          {: RESULT = new CondEval(e1, CondEval.NOT_EQUALS, e2, loc(e1left, e1right)); :}
-      |  expr:e1 LESS_THAN expr:e2
+      |  expr:e1 LESSTHAN expr:e2
          {: RESULT = new CondEval(e1, CondEval.LESS_THAN, e2, loc(e1left, e1right)); :}
-      |  expr:e1 GREATER_THAN expr:e2
+      |  expr:e1 GREATERTHAN expr:e2
          {: RESULT = new CondEval(e1, CondEval.GREATER_THAN, e2, loc(e1left, e1right)); :}
-      |  cond:c1 BOOL_AND cond:c2
+      |  cond:c1 AND cond:c2
          {: RESULT = new EvalAndOr(c1, EvalAndOr.BOOL_AND, c2, loc(c1left, c1right)); :}
-      |  cond:c1 BOOL_OR cond:c2
+      |  cond:c1 OR cond:c2
          {: RESULT = new EvalAndOr(c1, EvalAndOr.BOOL_OR, c2, loc(c1left, c1right)); :}
-      |  BOOL_NOT cond:c
+      |  NOT cond:c
          {: RESULT = new NotOP(NotOP.BOOL_NOT, c, loc(cleft, cright)); :}
       |  LPAREN cond:c RPAREN
          {: RESULT = c; :}

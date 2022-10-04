@@ -1,12 +1,10 @@
 package ast;
 
-import java.util.List;
-
 public class StatementList extends Statement{
     //final List<Statement> statements;
 
     Statement statement;
-    StatementList statements;
+    StatementList nextList;
 /*
     public StatementList(List<Statement> statements, Location loc) {
         super(loc);
@@ -16,16 +14,28 @@ public class StatementList extends Statement{
 
     public StatementList(Statement stmt, StatementList stmtList, Location loc){
         super(loc);
-        this.statements = statements;
-        this.statement = statement;
+        this.nextList = stmtList;
+        this.statement = stmt;
     }
 
+    /*
     public int getSize(){
         return this.statements.size();
     }
+    */
 
+    /* 
     public Statement at(int idx){
         return this.statements.get(idx);
+    }
+    */
+
+    public Statement getStatement(){
+        return this.statement;
+    }
+
+    public StatementList getNextStatement(){
+        return this.nextList;
     }
     
 }

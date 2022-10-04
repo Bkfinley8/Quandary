@@ -75,15 +75,15 @@ white_space = {new_line} | [ \t\f]
 "int"               { return symbol("int",  INTTYPE); }
 "if"               { return symbol("if",  IF); }
 "else"               { return symbol("else",  ELSE); }
-"<"               { return symbol("<",  LESS_THAN); }
-"<="               { return symbol("<=",  LESS_THAN_OR_EQUAL_TO); }
-">"               { return symbol(">",  GREATER_THAN); }
-">="               { return symbol(">=",  GREATER_THAN_OR_EQUAL_TO); }
-"=="               { return symbol("==",  DOUBLE_EQUALS); }
-"!="               { return symbol("!=",  NOT_EQUALS); }
-"!"               { return symbol("!",  BOOL_NOT); }
-"&&"               { return symbol("&&",  BOOL_AND); }
-"||"               { return symbol("||",  BOOL_OR); }
+"<"               { return symbol("<",  LESSTHAN); }
+"<="               { return symbol("<=",  LESSTHANOREQUALTO); }
+">"               { return symbol(">",  GREATERTHAN); }
+">="               { return symbol(">=",  GREATERTHANOREQUALTO); }
+"=="               { return symbol("==",  DOUBLEEQUALS); }
+"!="               { return symbol("!=",  NOTEQUALS); }
+"!"               { return symbol("!",  NOT); }
+"&&"               { return symbol("&&",  AND); }
+"||"               { return symbol("||",  OR); }
 "="               { return symbol("=",  EQUALS); }
 
 

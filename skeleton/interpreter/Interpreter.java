@@ -117,12 +117,22 @@ public class Interpreter {
     }
 
     long executeStmtList(StatementList stmtList, Long ret, HashMap<String, Long> varMap){
+        /*
         for(int i = 0; i < stmtList.getSize();i++){
             Statement stmt = stmtList.at(i);
             if(!this.hasReturned){
                 ret = executeStmt(stmt, ret, varMap);
             }
         }
+        */
+        StatementList currentStatementList = stmtList;
+        while(currentStatementList.getStatement() != null){
+            if(!this.hasReturned){
+                ret = executeStmt(currentStatementList.getStatement(), ret, varMap);
+            }
+            currentStatementList = currentStatementList.getNextStatement();
+        }
+
         return ret;
     }
 
