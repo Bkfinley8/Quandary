@@ -4,7 +4,6 @@ import java.io.*;
 import java.lang.Thread.State;
 import java.util.HashMap;
 import java.util.Random;
-
 import parser.ParserWrapper;
 import ast.*;
 
@@ -106,25 +105,15 @@ public class Interpreter {
     }
 
     String executeRoot(Program astRoot, long arg) {
-        Long lastReturn = 0L;
-        HashMap<String, Long> varMap = new HashMap<String, Long>();
-        VarDecl argument = astRoot.getArgs();
-        varMap.put(argument.getIdentifier(),arg);
-        StatementList statements = astRoot.getStmtList();
-        //lastReturn = (String) executeStmtList(statements, lastReturn, varMap) ;
-        //return lastReturn;
-        return String.valueOf(executeStmtList(statements, lastReturn, varMap));
+            Long lastReturn = 0L;
+            HashMap<String, Long> varMap = new HashMap<String, Long>();
+            VarDecl argument = astRoot.getArgs();
+            varMap.put(argument.getIdentifier(),arg);
+            StatementList statements = astRoot.getStmtList();
+            return String.valueOf(executeStmtList(statements, lastReturn, varMap));
     }
 
     long executeStmtList(StatementList stmtList, Long ret, HashMap<String, Long> varMap){
-        /*
-        for(int i = 0; i < stmtList.getSize();i++){
-            Statement stmt = stmtList.at(i);
-            if(!this.hasReturned){
-                ret = executeStmt(stmt, ret, varMap);
-            }
-        }
-        */
         StatementList currentStatementList = stmtList;
         while(!currentStatementList.isEmpty()){
             if(!this.hasReturned){
@@ -169,7 +158,6 @@ public class Interpreter {
             }
         } else if(stmt instanceof ReturnStatement){
             ReturnStatement temp = (ReturnStatement) stmt;
-            //System.out.println("DEBUG: " + temp.toString());
             Expr expr = temp.getExpr();
             lastReturn = evaluate(expr, varMap);
             this.hasReturned = true;
