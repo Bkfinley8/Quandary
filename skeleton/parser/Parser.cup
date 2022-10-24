@@ -27,7 +27,7 @@ parser code {:
 
 :};
 
-terminal PLUS, MINUS, TIMES, LPAREN, RPAREN, LCURLY, RCURLY, RETURN, PRINT, SEMI, INTTYPE, IF, ELSE, LESSTHAN, LESSTHANOREQUALTO, GREATERTHAN, GREATERTHANOREQUALTO, DOUBLEEQUALS, NOTEQUALS, NOT, AND, OR, EQUALS;
+terminal COMMA, PLUS, MINUS, TIMES, LPAREN, RPAREN, LCURLY, RCURLY, RETURN, PRINT, SEMI, INTTYPE, IF, ELSE, LESSTHAN, LESSTHANOREQUALTO, GREATERTHAN, GREATERTHANOREQUALTO, DOUBLEEQUALS, NOTEQUALS, NOT, AND, OR, EQUALS;
 
 
 terminal Long INTCONST;
@@ -41,6 +41,10 @@ non terminal Statement       stmt;
 non terminal StatementList   stmtList;
 non terminal VarDecl         varDecl;
 non terminal Integer         type;
+non terminal FuncDef     funcDef;
+non terminal FormalDeclList  formalDeclList;
+non terminal FuncDefList     funcDefList;
+non terminal NEExprList      neExprList;
 
 
 precedence left IF;
@@ -53,9 +57,40 @@ precedence left TIMES;
 
 start with program;
 
-program ::= varDecl:v1 LPAREN varDecl:v2 RPAREN LCURLY stmtList:sl RCURLY
-         {: RESULT = new Program(v1, v2, sl, loc(slleft, slright)); :}
+program ::= funcDefList:funcdl
+      {: RESULT = new Program(funcdl, loc(funcdlleft, funcdlright)); :}
       ;
+
+funcDefList ::= funcDef:fd funcDefList:funcdl
+      {: RESULT = new FuncDefList(fd, funcdl, loc(fdleft, fdright)); :}
+      | /* empty */
+         {: RESULT = null; :}
+      ;
+
+funcDef ::= varDecl:v1 LPAREN formalDeclList:fdl RPAREN LCURLY stmtList:sl RCURLY
+         {: RESULT = new FuncDef(v1, fdl, sl, loc(slleft, slright)); :}
+      ;
+
+varDecl ::= type:t IDENT:i
+         {: RESULT = new VarDecl(t, i, loc(tleft,tright)); :}
+      ;
+
+type ::= INTTYPE
+      {: RESULT = 1;  :}
+   ;
+
+formalDeclList ::= neFormalDeclList:nfdl
+         {: RESULT = nfdl; :}
+      | /* empty */
+         /* might be wrong? */
+         {: RESULT = null; :}
+      ;
+
+neFormalDeclList ::= varDecl:vd COMMA neFormalDeclList:fdl
+         {: RESULT = new formalDeclList(vd,fdl,loc(vdleft,vdright)); :}
+      | varDecl:vd;
+         {: RESULT = new formalDeclList(vd,null,loc(vdleft,vdright)); :}
+      ;      
 
 stmtList ::= stmt:s stmtList:sl
          {: RESULT = new StatementList(s,sl,loc(sleft,sright)); :}
@@ -77,13 +112,32 @@ stmt ::= RETURN expr:e SEMI
          {: RESULT = sl; :}
       ;
 
-varDecl ::= type:t IDENT:i
-         {: RESULT = new VarDecl(t, i); :}
+exprList ::= neExprList:nel
+         {: RESULT = nel; :}
+      |  /* empty */
+      /* might be wrong? */
+         {: RESULT = null; :}
       ;
 
-type ::= INTTYPE
-      {: RESULT = 1;  :}
-   ;
+neExprList ::= expr:e COMMA neExprList:nel
+         {: RESULT = new ExprList(e,nel,loc(eleft,eright)); :}
+      |  expr:e
+         {: RESULT = new ExprList(e,null,loc(eleft,eright));; :}
+      ;
+
+expr ::= INTCONST:c
+         {: RESULT = new ConstExpr(c, loc(cleft, cright)); :}
+      |  binaryExpr:e
+         {: RESULT = e; :}
+      |  LPAREN expr:e RPAREN
+         {: RESULT = e; :}
+      |  MINUS expr:e
+         {: RESULT = new UnaryExpr(e,loc(eleft, eright));:}
+      |  IDENT:i
+         {: RESULT = new IdentExpr(i, loc(ileft, iright)); :}
+      |  IDENT:i LPAREN exprList:el RPAREN
+         {: RESULT = new FunctionExpr(i,el,loc(ileft,iright)); :}
+      ;
 
 cond ::= expr:e1 LESSTHANOREQUALTO expr:e2
          {: RESULT = new CondEval(e1, CondEval.LESS_THAN_OR_EQUAL_TO, e2, loc(e1left, e1right)); :}
@@ -105,18 +159,6 @@ cond ::= expr:e1 LESSTHANOREQUALTO expr:e2
          {: RESULT = new NotOP(NotOP.BOOL_NOT, c, loc(cleft, cright)); :}
       |  LPAREN cond:c RPAREN
          {: RESULT = c; :}
-      ;
-
-expr ::= INTCONST:c
-         {: RESULT = new ConstExpr(c, loc(cleft, cright)); :}
-      |  binaryExpr:e
-         {: RESULT = e; :}
-      |  LPAREN expr:e RPAREN
-         {: RESULT = e; :}
-      |  MINUS expr:e
-         {: RESULT = new UnaryExpr(e,loc(eleft, eright));:}
-      |  IDENT:i
-         {: RESULT = new IdentExpr(i, loc(ileft, iright)); :}
       ;
 
 binaryExpr ::= expr:e1 PLUS expr:e2

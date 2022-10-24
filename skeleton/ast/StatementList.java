@@ -12,18 +12,18 @@ public class StatementList extends Statement{
     }
 
     public Statement getStatement(){
-        return this.statement;
+        return statement;
     }
 
     public StatementList getNextStatement(){
-        return this.nextList;
+        return nextList;
     }
 
     public boolean isEmpty(){
-        return this.statement == null;
+        return statement == null;
     }
     
     public boolean hasNext(){
-        return this.nextList != null;
+        return nextList != null;
     }
 }

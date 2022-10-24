@@ -1,10 +1,11 @@
 package ast;
 
-public class VarDecl{
+public class VarDecl extends ASTNode{
     final int type;
     final String identifier;
 
-    public VarDecl(int type, String ident) {
+    public VarDecl(int type, String ident, Location loc) {
+        super(loc);
         this.type = type;
         this.identifier = ident;
     }

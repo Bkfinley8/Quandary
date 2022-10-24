@@ -104,7 +104,7 @@ public class Interpreter {
         }
     }
 
-    String executeRoot(Program astRoot, long arg) {
+    Object executeRoot(Program astRoot, long arg) {
             Long lastReturn = 0L;
             HashMap<String, Long> varMap = new HashMap<String, Long>();
             VarDecl argument = astRoot.getArgs();
@@ -229,6 +229,71 @@ public class Interpreter {
             throw new RuntimeException("Unhandled Expr type");
         }
     }
+
+    /*
+    Object executeRoot(Program astRoot, long arg){
+        return executeStatementList(astRoot.getStmtList());
+    }
+
+    Object executeStatementList(StatementList sl){
+        //Object retVal = executeStatement(sl.getStatement());
+        //if(sl.getNextStatement() != null){
+        //    retVal = executeStatement(sl.getNextStatement());
+        //}
+        //return retVal;
+
+        Object retVal = executeStatement(sl.getStatement());
+        if(retVal != null){
+            return retVal;
+        }
+        if(sl.getNextStatement() != null){
+            return executeStatementList(sl.getNextStatement());
+        }
+        return null;
+    }
+
+    Object executeStatement(Statement stmt){
+        Object retVal;
+        if(stmt instanceof VarDeclarationStatement){
+            VarDeclarationStatement temp = (VarDeclarationStatement)stmt;
+            VarDecl var = temp.getVarDecl();
+            Expr expr = temp.getExpr();
+            varMap.put(var.getIdentifier(),(Long) evaluate(expr, varMap));
+        } else if(stmt instanceof PrintStatement){
+            PrintStatement temp = (PrintStatement) stmt; 
+            Expr expr = temp.getExpr();
+            System.out.println(evaluate(expr, varMap));
+        } else if(stmt instanceof IfStatement){
+            IfStatement temp = (IfStatement) stmt;
+            Condition cond = temp.getCondition();
+            Statement ifStatement = temp.getStatement();
+            if(evalCondition(cond,varMap)){
+                retVal = executeStmt(ifStatement, varMap);
+            } 
+        } else if(stmt instanceof IfElseStatement){
+            IfElseStatement temp = (IfElseStatement) stmt;
+            Condition cond = temp.getCondition();
+            Statement ifStatement = temp.getIfStatement();
+            Statement elseStatement = temp.getElseStatement();
+            if(evalCondition(cond,varMap)){
+                retVal = executeStmt(ifStatement, varMap);
+            } else {
+                retVal = executeStmt(elseStatement, varMap);
+            }
+        } else if(stmt instanceof ReturnStatement){
+            ReturnStatement temp = (ReturnStatement) stmt;
+            Expr expr = temp.getExpr();
+            retVal = evaluate(expr, varMap);
+            this.hasReturned = true;
+        } else if(stmt instanceof StatementList){
+            StatementList temp = (StatementList) stmt;
+            retVal = executeStmtList(temp, varMap);
+        } else {
+            System.out.println("ERROR: SOMETHING WENT WWRONG");
+        }
+        return retVal;
+    }
+    */
 
 	public static void fatalError(String message, int processReturnCode) {
         System.out.println(message);

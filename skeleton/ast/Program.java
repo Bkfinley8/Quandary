@@ -3,9 +3,7 @@ package ast;
 
 public class Program extends ASTNode {
 
-    final VarDecl functionIdentifier;
-    final VarDecl args;
-    final StatementList statements;
+    FuncDefList funcDefList;
 
     /*
     public Program(VarDecl funcIdent, VarDecl args, List<Statement> statements, Location loc) {
@@ -15,19 +13,15 @@ public class Program extends ASTNode {
         this.statements = new StatementList(statements, loc);
     }
     */
-    public Program(VarDecl funcIdent, VarDecl args, StatementList statements, Location loc) {
+    public Program(FuncDefList funcDefList, Location loc) {
         super(loc);
-        this.functionIdentifier = funcIdent;
-        this.args = args;
-        this.statements = statements;
+        this.funcDefList = funcDefList;
+
     }
 
-    public StatementList getStmtList(){
-        return this.statements;
+    public FuncDefList getStmtList(){
+        return this.funcDefList;
     }
 
-    public VarDecl getArgs(){
-        return this.args;
-    }
 
 }

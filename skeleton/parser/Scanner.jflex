@@ -85,6 +85,7 @@ white_space = {new_line} | [ \t\f]
 "&&"               { return symbol("&&",  AND); }
 "||"               { return symbol("||",  OR); }
 "="               { return symbol("=",  EQUALS); }
+","               { return symbol(",",  COMMA); }
 
 
 
