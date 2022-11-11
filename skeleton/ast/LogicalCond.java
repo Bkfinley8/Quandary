@@ -1,14 +1,15 @@
 package ast;
 
-public class EvalAndOr extends Condition{
+public class LogicalCond extends Condition{
     public static final int BOOL_AND = 1;
     public static final int BOOL_OR = 2;
+    public static final int BOOL_NOT = 3;
 
     final Condition condition1;
     final int operator;
     final Condition condition2;
 
-    public EvalAndOr(Condition cond1, int operator, Condition cond2, Location loc) {
+    public LogicalCond(Condition cond1, int operator, Condition cond2, Location loc) {
         super(loc);
         this.condition1 = cond1;
         this.operator = operator;

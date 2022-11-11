@@ -242,7 +242,7 @@ Object execute(Statement stmt, HashMap<String, Object> varMap){
     }
 }
  
-
+/* 
     boolean evalCondition(Condition cond, HashMap<String, Object> varMap){
         if(cond instanceof NotOP){
             NotOP temp = (NotOP) cond;
@@ -278,6 +278,30 @@ Object execute(Statement stmt, HashMap<String, Object> varMap){
         }  else {
             throw new RuntimeException("Unhandled Condition type");
         }
+    }
+    */
+    boolean evalCondition(Condition cond, HashMap<String, Object> varMap){
+        if(cond instanceof CondEval){
+            CondEval temp = (CondEval)cond;
+            Expr expr1 = temp.getExpr1();
+            Expr expr2 = temp.getExpr2();
+            switch (temp.getOperator()){
+                case CondEval.DOUBLE_EQUALS: return (Long)evaluate(expr1, varMap) == (Long)evaluate(expr2, varMap);
+                case CondEval.NOT_EQUALS: return (Long)evaluate(expr1, varMap) != (Long)evaluate(expr2, varMap);
+                case CondEval.LESS_THAN: return (Long)evaluate(expr1, varMap) < (Long)evaluate(expr2, varMap);
+                case CondEval.GREATER_THAN: return (Long)evaluate(expr1, varMap) > (Long)evaluate(expr2, varMap);
+                case CondEval.LESS_THAN_OR_EQUAL_TO: return (Long)evaluate(expr1, varMap) <= (Long)evaluate(expr2, varMap);
+                case CondEval.GREATER_THAN_OR_EQUAL_TO: return (Long)evaluate(expr1, varMap) >= (Long)evaluate(expr2, varMap);
+            }
+        } else if(cond instanceof LogicalCond){
+            LogicalCond temp = (LogicalCond)cond;
+            switch(temp.getOperator()){
+                case LogicalCond.BOOL_AND: return evalCondition(temp.getCondition1(), varMap) && evalCondition(temp.getCondition2(), varMap);
+                case LogicalCond.BOOL_OR: return evalCondition(temp.getCondition1(), varMap) || evalCondition(temp.getCondition2(), varMap);
+                case LogicalCond.BOOL_NOT: return !evalCondition(temp.getCondition1(), varMap);
+            }
+        }
+        throw new RuntimeException();
     }
 
     Object evaluate(Expr expr, HashMap<String, Object> varMap){

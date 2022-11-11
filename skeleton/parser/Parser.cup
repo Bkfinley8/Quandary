@@ -40,7 +40,6 @@ non terminal Condition       cond;
 non terminal Statement       stmt;
 non terminal StatementList   stmtList;
 non terminal VarDecl         varDecl;
-non terminal MutableVarDecl  varDecl;
 non terminal Integer         type;
 non terminal FuncDef         funcDef;
 non terminal FuncDefList     funcDefList;
@@ -162,11 +161,11 @@ cond ::= expr:e1 LESSTHANOREQUALTO expr:e2
       |  expr:e1 GREATERTHAN expr:e2
          {: RESULT = new CondEval(e1, CondEval.GREATER_THAN, e2, loc(e1left, e1right)); :}
       |  cond:c1 AND cond:c2
-         {: RESULT = new EvalAndOr(c1, EvalAndOr.BOOL_AND, c2, loc(c1left, c1right)); :}
+         {: RESULT = new LogicalCond(c1, LogicalCond.BOOL_AND, c2, loc(c1left, c1right)); :}
       |  cond:c1 OR cond:c2
-         {: RESULT = new EvalAndOr(c1, EvalAndOr.BOOL_OR, c2, loc(c1left, c1right)); :}
+         {: RESULT = new LogicalCond(c1, LogicalCond.BOOL_OR, c2, loc(c1left, c1right)); :}
       |  NOT cond:c
-         {: RESULT = new NotOP(NotOP.BOOL_NOT, c, loc(cleft, cright)); :}
+         {: RESULT = new LogicalCond(c, LogicalCond.BOOL_NOT, null, loc(cleft, cright)); :}
       |  LPAREN cond:c RPAREN
          {: RESULT = c; :}
       ;
