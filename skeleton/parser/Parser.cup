@@ -149,6 +149,8 @@ expr ::= INTCONST:c
          {: RESULT = new FuncExpr(i,el,loc(ileft,iright)); :}
       |  NIL
          {: RESULT = new NilExpr(); :}
+      |  LPAREN type RPAREN expr:e
+         {: RESULT = new CastExpr(type,e,loc(eleft,eright)); :}
       ;
 
 cond ::= expr:e1 LESSTHANOREQUALTO expr:e2
