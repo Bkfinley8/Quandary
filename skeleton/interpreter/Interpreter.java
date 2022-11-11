@@ -237,9 +237,6 @@ Object execute(Statement stmt, HashMap<String, Object> varMap){
         Expr expr = temp.getExpr();
         System.out.println(evaluate(expr, varMap));
         return null;
-    } else if(stmt instanceof StatementList){
-        StatementList temp = (StatementList) stmt;
-        return execute(temp, varMap);
     } else {
         throw new RuntimeException("Unhandled Statement type");
     }
