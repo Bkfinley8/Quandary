@@ -48,16 +48,14 @@ non terminal FormalDeclList  neFormalDeclList;
 non terminal ExprList        neExprList;
 non terminal ExprList        exprList;
 
-precedence left PRINT;
-precedence left IF;
-precedence left ELSE;
-precedence left AND, OR;
+
+precedence left OR;
+precedence left AND;
 precedence left NOT;
 precedence left LESSTHANOREQUALTO, GREATERTHANOREQUALTO, DOUBLEEQUALS, NOTEQUALS, LESSTHAN, GREATERTHAN;
-precedence left DOT;
 precedence left PLUS, MINUS;
 precedence left TIMES;
-
+precedence left ELSE;
 start with program;
 
 program ::= funcDefList:funcdl
@@ -142,6 +140,7 @@ expr ::= INTCONST:c
          {: RESULT = e; :}
       |  MINUS expr:e
          {: RESULT = new UnaryExpr(e,loc(eleft, eright));:}
+         %prec UMINUS
       |  IDENT:i
          {: RESULT = new IdentExpr(i, loc(ileft, iright)); :}
       |  IDENT:i LPAREN exprList:el RPAREN
