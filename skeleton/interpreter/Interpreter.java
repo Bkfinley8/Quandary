@@ -301,9 +301,7 @@ Object execute(Statement stmt, HashMap<String, Object> varMap){
             UnaryExpr unaryExpr = (UnaryExpr)expr;
             return -1 * (Long)evaluate(unaryExpr.getExpr(), varMap);
         } else if(expr instanceof IdentExpr){
-            IdentExpr temp = (IdentExpr) expr;
-            String varName = temp.getIdentifier();
-            return varMap.get(varName);
+            return varMap.get(((IdentExpr)expr).getIdentifier());
         } else if(expr instanceof FuncExpr) {
             /* 
 
