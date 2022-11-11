@@ -72,6 +72,7 @@ white_space = {new_line} | [ \t\f]
 "{"               { return symbol("{",  LCURLY); }
 "}"               { return symbol("}",  RCURLY); }
 "print"               { return symbol("print",  PRINT); }
+"="               { return symbol("=",  EQUALS); }
 "int"               { return symbol("int",  INTTYPE); }
 "if"               { return symbol("if",  IF); }
 "else"               { return symbol("else",  ELSE); }
@@ -84,7 +85,6 @@ white_space = {new_line} | [ \t\f]
 "!"               { return symbol("!",  NOT); }
 "&&"               { return symbol("&&",  AND); }
 "||"               { return symbol("||",  OR); }
-"="               { return symbol("=",  EQUALS); }
 ","               { return symbol(",",  COMMA); }
 "."               { return symbol(".",  DOT); }
 "mutable"               { return symbol("mutable",  MUTABLE); }
