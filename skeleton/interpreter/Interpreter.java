@@ -361,6 +361,18 @@ public class Interpreter {
             if(temp.getIdent().equals("randomInt")){
                 long val = ((QInt)evaluate(temp.getExprList().getFirst(), varMap)).getVal();
                 return new QInt(ThreadLocalRandom.current().nextLong(val));
+            } else if(temp.getIdent().equals("isNil")){
+                Expr arg = temp.getExprList().getFirst();
+                return arg instanceof NilExpr ? new QInt (1) : new QInt(0);
+            } else if(temp.getIdent().equals("isAtom")){
+                Expr arg = temp.getExprList().getFirst();
+                return (arg instanceof NilExpr) || (arg instanceof ConstExpr) ? new QInt (1) : new QInt(0);
+            } else if(temp.getIdent().equals("left")){
+                QRef arg = (QRef)evaluate(temp.getExprList().getFirst(),varMap);
+                return arg.getRef().getLeft();
+            }  else if(temp.getIdent().equals("right")){
+                QRef arg = (QRef)evaluate(temp.getExprList().getFirst(),varMap);
+                return arg.getRef().getRight();
             }
             FuncDef callee = astRoot.getList().lookFuncDef(temp.getIdent());
             HashMap<String,QVal> calleeEnv = new HashMap<String,QVal>();

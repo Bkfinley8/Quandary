@@ -8,6 +8,14 @@ public class QObj {
         this.right = r;
     }
 
+    public QVal getLeft(){
+        return this.left;
+    }
+
+    public QVal getRight(){
+        return this.right;
+    }
+
     @Override
     public String toString(){
         String ret = "";
