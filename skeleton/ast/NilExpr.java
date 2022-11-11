@@ -3,8 +3,8 @@ package ast;
 public class NilExpr extends Expr {
     final Object value;
 
-    public NilExpr(Location loc) {
-        super(loc);
+    public NilExpr() {
+        super(null);
         this.value = null;
     }
 

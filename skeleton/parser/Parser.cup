@@ -148,7 +148,7 @@ expr ::= INTCONST:c
       |  IDENT:i LPAREN exprList:el RPAREN
          {: RESULT = new FuncExpr(i,el,loc(ileft,iright)); :}
       |  NIL
-         {: RESULT = new NilExpr(nleft,nright); :}
+         {: RESULT = new NilExpr(); :}
       ;
 
 cond ::= expr:e1 LESSTHANOREQUALTO expr:e2
