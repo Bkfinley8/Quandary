@@ -91,6 +91,7 @@ white_space = {new_line} | [ \t\f]
 "Q"               { return symbol("Q",  Q); }
 "Ref"               { return symbol("Ref",  REF); }
 "while"               { return symbol("while",  WHILE); }
+"nil"               { return symbol("nil",  NIL); }
 
 
 

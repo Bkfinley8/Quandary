@@ -7,4 +7,13 @@ public class QObj {
         this.left = l;
         this.right = r;
     }
+
+    @Override
+    public String toString(){
+        String ret = "";
+        ret = "(" + this.left.toString() + " . " + this.right.toString() + ")";
+        return ret;
+    }
+
+
 }

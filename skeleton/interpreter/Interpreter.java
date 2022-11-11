@@ -372,6 +372,8 @@ public class Interpreter {
                 currExprList = currExprList.getRest();
             }  
             return execute(callee.getStatementList(), calleeEnv); 
+        } else if(expr instanceof NilExpr){
+            return null;
         } else {
             throw new RuntimeException("Unhandled Expr type");
         }

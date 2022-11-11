@@ -9,4 +9,10 @@ class QInt extends QVal{
     public long getVal(){
         return this.val;
     }
+
+    @Override
+    public String toString(){
+        return String.valueOf(this.val);
+    }
+
 }

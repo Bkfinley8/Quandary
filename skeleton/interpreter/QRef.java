@@ -5,4 +5,9 @@ class QRef extends QVal {
     public QRef(QObj ref){
         this.referent = ref;
     }
+
+    @Override
+    public String toString(){
+        return this.referent.toString();
+    }
 }
