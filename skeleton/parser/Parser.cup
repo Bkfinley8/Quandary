@@ -27,7 +27,7 @@ parser code {:
 
 :};
 
-terminal PLUS, MINUS, TIMES, LPAREN, RPAREN, LCURLY, RCURLY, RETURN, PRINT, SEMI, INTTYPE, IF, ELSE, LESSTHAN, LESSTHANOREQUALTO, GREATERTHAN, GREATERTHANOREQUALTO, DOUBLEEQUALS, NOTEQUALS, NOT, AND, OR, EQUALS, COMMA;
+terminal PLUS, MINUS, TIMES, LPAREN, RPAREN, LCURLY, RCURLY, RETURN, PRINT, SEMI, INTTYPE, IF, ELSE, LESSTHAN, LESSTHANOREQUALTO, GREATERTHAN, GREATERTHANOREQUALTO, DOUBLEEQUALS, NOTEQUALS, NOT, AND, OR, EQUALS, COMMA, DOT, MUTABLE,Q, REF, WHILE;
 
 
 terminal Long INTCONST;
@@ -48,12 +48,13 @@ non terminal NEmptyFormalDeclList  neFormalDeclList;
 non terminal NEmptyExprList      neExprList;
 non terminal ExprList        exprList;
 
-
+precedence left PRINT;
 precedence left IF;
 precedence left ELSE;
 precedence left AND, OR;
 precedence left NOT;
 precedence left LESSTHANOREQUALTO, GREATERTHANOREQUALTO, DOUBLEEQUALS, NOTEQUALS, LESSTHAN, GREATERTHAN;
+precedence left DOT;
 precedence left PLUS, MINUS;
 precedence left TIMES;
 
@@ -78,7 +79,11 @@ varDecl ::= type:t IDENT:i
       ;
 
 type ::= INTTYPE
-      {: RESULT = 1;  :}
+         {: RESULT = 1;  :}
+      |  Q
+         {: RESULT = 2;  :}
+      |  REF
+         {: RESULT = 3;  :}
    ;
 
 formalDeclList ::= neFormalDeclList:nfdl
@@ -112,6 +117,8 @@ stmt ::= RETURN expr:e SEMI
          {: RESULT = new PrintStatement(e, loc(eleft, eright)); :}
       |  LCURLY stmtList:sl RCURLY
          {: RESULT = sl; :}
+      |  WHILE cond:c stmt:s
+         {: RESULT = new WhileStatement(c, s, loc(cleft, cright)); :}
       ;
 
 exprList ::= neExprList:nel
@@ -169,4 +176,6 @@ binaryExpr ::= expr:e1 PLUS expr:e2
             {: RESULT = new BinaryExpr(e1, BinaryExpr.MINUS, e2, loc(e1left, e1right)); :}
          |  expr:e1 TIMES expr:e2
             {: RESULT = new BinaryExpr(e1, BinaryExpr.TIMES, e2, loc(e1left, e1right)); :}
+         |  expr:e1 DOT expr:e2
+            {: RESULT = new BinaryExpr(e1, BinaryExpr.DOT, e2, loc(e1left, e1right)); :}
          ;
