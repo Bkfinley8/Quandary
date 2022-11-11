@@ -55,6 +55,7 @@ precedence left NOT;
 precedence left LESSTHANOREQUALTO, GREATERTHANOREQUALTO, DOUBLEEQUALS, NOTEQUALS, LESSTHAN, GREATERTHAN;
 precedence left PLUS, MINUS;
 precedence left TIMES;
+precedence left dot;
 precedence left UMINUS;
 precedence left ELSE;
 start with program;
