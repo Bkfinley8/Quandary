@@ -1,12 +1,18 @@
 package ast;
 
-public class ExprList extends Expr{
-    Expr first;
-    ExprList rest;
+public class ExprList extends ASTNode {
+    NEmptyExprList list;
 
-    public ExprList(Expr first, ExprList rest, Location loc){
+    public ExprList(NEmptyExprList lists, Location loc){
         super(loc);
-        this.first = first;
-        this.rest = rest;
+        this.list = lists;
+    }
+
+    public NEmptyExprList getList(){
+        return this.list;
+    }
+
+    public boolean isEmpty(){
+        return list == null;
     }
 }

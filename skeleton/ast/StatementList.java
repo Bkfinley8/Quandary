@@ -2,8 +2,8 @@ package ast;
 
 public class StatementList extends Statement{
 
-    Statement statement;
-    StatementList nextList;
+    final Statement statement;
+    final StatementList nextList;
 
     public StatementList(Statement stmt, StatementList stmtList, Location loc){
         super(loc);

@@ -1,12 +1,19 @@
 package ast;
 
-public class FormalDeclList extends VarDecl {
-    VarDecl first;
-    FormalDeclList rest;
+public class FormalDeclList extends ASTNode{
 
-    public FormalDeclList(VarDecl first, FormalDeclList rest, Location loc){
+    NEmptyFormalDeclList list;
+
+    public FormalDeclList(NEmptyFormalDeclList list, Location loc){
         super(loc);
-        this.first = first;
-        this.rest = rest;
+        this.list = list;
+    }
+
+    public NEmptyFormalDeclList getList(){
+        return this.list;
+    }
+
+    public boolean isEmpty(){
+        return this.list == null;
     }
 }

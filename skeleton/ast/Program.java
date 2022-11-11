@@ -19,7 +19,7 @@ public class Program extends ASTNode {
 
     }
 
-    public FuncDefList getStmtList(){
+    public FuncDefList getList(){
         return this.funcDefList;
     }
 

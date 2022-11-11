@@ -86,6 +86,11 @@ white_space = {new_line} | [ \t\f]
 "||"               { return symbol("||",  OR); }
 "="               { return symbol("=",  EQUALS); }
 ","               { return symbol(",",  COMMA); }
+"."               { return symbol(".",  DOT); }
+"mutable"               { return symbol("mutable",  MUTABLE); }
+"Q"               { return symbol("Q",  Q); }
+"Ref"               { return symbol("Ref",  REF); }
+"while"               { return symbol("while",  WHILE); }
 
 
 
