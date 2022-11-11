@@ -119,10 +119,10 @@ public class Interpreter {
     }
 */
 
-    Object executeRoot(Program astRoot, long arg){
+    QVal executeRoot(Program astRoot, long arg){
         FuncDef mainFuncDef = astRoot.getList().lookFuncDef("main");
-        HashMap<String,Object> mainEnv = new HashMap<String,Object>();
-        mainEnv.put(mainFuncDef.getFormalDeclList().getFirst().getIdentifier(),arg);
+        HashMap<String,QVal> mainEnv = new HashMap<String,QVal>();
+        mainEnv.put(mainFuncDef.getFormalDeclList().getFirst().getIdentifier(),new QInt(arg));
         return execute(mainFuncDef.getStatementList(), mainEnv);
     }
 /* 
@@ -193,53 +193,53 @@ public class Interpreter {
     }
 */
 
-Object execute(Statement stmt, HashMap<String, Object> varMap){
-    if(stmt instanceof StatementList){
-        StatementList temp = (StatementList) stmt;
-        Object retVal = execute(temp.getStatement(), varMap);
-        if(retVal != null){
-            return retVal;
-        }
-        if(temp.getNextStatement() != null){
-            return execute(temp.getNextStatement(), varMap);
-        }
-        return null;
-    } else if(stmt instanceof VarDeclarationStatement){
-        VarDeclarationStatement temp = (VarDeclarationStatement)stmt;
-        VarDecl var = temp.getVarDecl();
-        Expr expr = temp.getExpr();
-        varMap.put(var.getIdentifier(), evaluate(expr, varMap));
-        return null;
-    } else if(stmt instanceof IfStatement){
-        IfStatement temp = (IfStatement) stmt;
-        Condition cond = temp.getCondition();
-        Statement ifStatement = temp.getStatement();
-        if(evaluate(cond,varMap)){
-            return execute(ifStatement,varMap);
-        } 
-        return null;
-    } else if(stmt instanceof IfElseStatement){
-        IfElseStatement temp = (IfElseStatement) stmt;
-        Condition cond = temp.getCondition();
-        Statement ifStatement = temp.getIfStatement();
-        Statement elseStatement = temp.getElseStatement();
-        if(evaluate(cond,varMap)){
-            return execute(ifStatement, varMap);
+    QVal execute(Statement stmt, HashMap<String, QVal> varMap){
+        if(stmt instanceof StatementList){
+            StatementList temp = (StatementList) stmt;
+            QVal retVal = execute(temp.getStatement(), varMap);
+            if(retVal != null){
+                return retVal;
+            }
+            if(temp.getNextStatement() != null){
+                return execute(temp.getNextStatement(), varMap);
+            }
+            return null;
+        } else if(stmt instanceof VarDeclarationStatement){
+            VarDeclarationStatement temp = (VarDeclarationStatement)stmt;
+            VarDecl var = temp.getVarDecl();
+            Expr expr = temp.getExpr();
+            varMap.put(var.getIdentifier(), evaluate(expr, varMap));
+            return null;
+        } else if(stmt instanceof IfStatement){
+            IfStatement temp = (IfStatement) stmt;
+            Condition cond = temp.getCondition();
+            Statement ifStatement = temp.getStatement();
+            if(evaluate(cond,varMap)){
+                return execute(ifStatement,varMap);
+            } 
+            return null;
+        } else if(stmt instanceof IfElseStatement){
+            IfElseStatement temp = (IfElseStatement) stmt;
+            Condition cond = temp.getCondition();
+            Statement ifStatement = temp.getIfStatement();
+            Statement elseStatement = temp.getElseStatement();
+            if(evaluate(cond,varMap)){
+                return execute(ifStatement, varMap);
+            } else {
+                return execute(elseStatement, varMap);
+            }
+        } else if(stmt instanceof ReturnStatement){
+            ReturnStatement temp = (ReturnStatement) stmt;
+            Expr expr = temp.getExpr();
+            return evaluate(expr, varMap);
+        } else if(stmt instanceof PrintStatement){
+            PrintStatement temp = (PrintStatement) stmt; 
+            Expr expr = temp.getExpr();
+            System.out.println(evaluate(expr, varMap));
+            return null;
         } else {
-            return execute(elseStatement, varMap);
+            throw new RuntimeException("Unhandled Statement type");
         }
-    } else if(stmt instanceof ReturnStatement){
-        ReturnStatement temp = (ReturnStatement) stmt;
-        Expr expr = temp.getExpr();
-        return evaluate(expr, varMap);
-    } else if(stmt instanceof PrintStatement){
-        PrintStatement temp = (PrintStatement) stmt; 
-        Expr expr = temp.getExpr();
-        System.out.println(evaluate(expr, varMap));
-        return null;
-    } else {
-        throw new RuntimeException("Unhandled Statement type");
-    }
 }
  
 /* 
@@ -280,18 +280,18 @@ Object execute(Statement stmt, HashMap<String, Object> varMap){
         }
     }
     */
-    boolean evaluate(Condition cond, HashMap<String, Object> varMap){
+    boolean evaluate(Condition cond, HashMap<String, QVal> varMap){
         if(cond instanceof CondEval){
             CondEval temp = (CondEval)cond;
             Expr expr1 = temp.getExpr1();
             Expr expr2 = temp.getExpr2();
             switch (temp.getOperator()){
-                case CondEval.DOUBLE_EQUALS: return (long)evaluate(expr1, varMap) == (long)evaluate(expr2, varMap);
-                case CondEval.NOT_EQUALS: return (long)evaluate(expr1, varMap) != (long)evaluate(expr2, varMap);
-                case CondEval.LESS_THAN: return (long)evaluate(expr1, varMap) < (long)evaluate(expr2, varMap);
-                case CondEval.GREATER_THAN: return (long)evaluate(expr1, varMap) > (long)evaluate(expr2, varMap);
-                case CondEval.LESS_THAN_OR_EQUAL_TO: return (long)evaluate(expr1, varMap) <= (long)evaluate(expr2, varMap);
-                case CondEval.GREATER_THAN_OR_EQUAL_TO: return (long)evaluate(expr1, varMap) >= (long)evaluate(expr2, varMap);
+                case CondEval.DOUBLE_EQUALS: return ((QInt)evaluate(expr1, varMap)).getVal() == ((QInt)evaluate(expr2, varMap)).getVal();
+                case CondEval.NOT_EQUALS: return ((QInt)evaluate(expr1, varMap)).getVal() != ((QInt)evaluate(expr2, varMap)).getVal();
+                case CondEval.LESS_THAN: return ((QInt)evaluate(expr1, varMap)).getVal() < ((QInt)evaluate(expr2, varMap)).getVal();
+                case CondEval.GREATER_THAN: return ((QInt)evaluate(expr1, varMap)).getVal() > ((QInt)evaluate(expr2, varMap)).getVal();
+                case CondEval.LESS_THAN_OR_EQUAL_TO: return ((QInt)evaluate(expr1, varMap)).getVal() <= ((QInt)evaluate(expr2, varMap)).getVal();
+                case CondEval.GREATER_THAN_OR_EQUAL_TO: return ((QInt)evaluate(expr1, varMap)).getVal() >= ((QInt)evaluate(expr2, varMap)).getVal();
             }
         } else if(cond instanceof LogicalCond){
             LogicalCond temp = (LogicalCond)cond;
@@ -304,21 +304,22 @@ Object execute(Statement stmt, HashMap<String, Object> varMap){
         throw new RuntimeException();
     }
 
-    Object evaluate(Expr expr, HashMap<String, Object> varMap){
+    QVal evaluate(Expr expr, HashMap<String, QVal> varMap){
         if (expr instanceof ConstExpr) {
-            return ((ConstExpr)expr).getValue();
+            return new QInt(((ConstExpr)expr).getValue());
         } else if (expr instanceof BinaryExpr) {
             BinaryExpr binaryExpr = (BinaryExpr)expr;
             switch (binaryExpr.getOperator()) {
-                case BinaryExpr.PLUS: return (long)evaluate(binaryExpr.getLeftExpr(), varMap) + (long)evaluate(binaryExpr.getRightExpr(), varMap);
-                case BinaryExpr.MINUS: return (long)evaluate(binaryExpr.getLeftExpr(), varMap) - (long)evaluate(binaryExpr.getRightExpr(), varMap);
-                case BinaryExpr.TIMES: return (long)evaluate(binaryExpr.getLeftExpr(), varMap) * (long)evaluate(binaryExpr.getRightExpr(), varMap);
-                //case BinaryExpr.DOT: return new QRef(new QObj((QVal) evaluate(binaryExpr.getLeftExpr(),varMap),(QVal) evaluate(binaryExpr.getRightExpr(),varMap)));
+                case BinaryExpr.PLUS: return new QInt(((QInt)evaluate(binaryExpr.getLeftExpr(), varMap)).getVal() + ((QInt)evaluate(binaryExpr.getRightExpr(), varMap)).getVal());
+                case BinaryExpr.MINUS: return new QInt(((QInt)evaluate(binaryExpr.getLeftExpr(), varMap)).getVal() - ((QInt)evaluate(binaryExpr.getRightExpr(), varMap)).getVal());
+                case BinaryExpr.TIMES: return new QInt(((QInt)evaluate(binaryExpr.getLeftExpr(), varMap)).getVal() * ((QInt)evaluate(binaryExpr.getRightExpr(), varMap)).getVal());
+                case BinaryExpr.DOT: return new QRef(new QObj((QVal) evaluate(binaryExpr.getLeftExpr(),varMap),(QVal) evaluate(binaryExpr.getRightExpr(),varMap)));
                 default: throw new RuntimeException("Unhandled operator");
             }
         } else if(expr instanceof UnaryExpr) {
             UnaryExpr unaryExpr = (UnaryExpr)expr;
-            return -1 * (Long)evaluate(unaryExpr.getExpr(), varMap);
+            long value = ((QInt)evaluate(unaryExpr.getExpr(), varMap)).getVal();
+            return new QInt(-value);
         } else if(expr instanceof IdentExpr){
             return varMap.get(((IdentExpr)expr).getIdentifier());
         } else if(expr instanceof FuncExpr) {
@@ -358,10 +359,11 @@ Object execute(Statement stmt, HashMap<String, Object> varMap){
             */
             FuncExpr temp = (FuncExpr)expr;
             if(temp.getIdent().equals("randomInt")){
-                return ThreadLocalRandom.current().nextLong((Long)evaluate(temp.getExprList().getFirst(), varMap));
+                long val = ((QInt)evaluate(temp.getExprList().getFirst(), varMap)).getVal();
+                return new QInt(ThreadLocalRandom.current().nextLong(val));
             }
             FuncDef callee = astRoot.getList().lookFuncDef(temp.getIdent());
-            HashMap<String,Object> calleeEnv = new HashMap<String,Object>();
+            HashMap<String,QVal> calleeEnv = new HashMap<String,QVal>();
             FormalDeclList currentFormalDeclList = callee.getFormalDeclList();
             ExprList currExprList = temp.getExprList();
             while(currentFormalDeclList != null){
