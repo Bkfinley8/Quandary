@@ -77,8 +77,6 @@ funcDef ::= varDecl:v1 LPAREN formalDeclList:fdl RPAREN LCURLY stmtList:sl RCURL
 
 varDecl ::= type:t IDENT:i
          {: RESULT = new VarDecl(t, i, loc(tleft,tright)); :}
-      |  MUTABLE type:t IDENT:i
-         {: RESULT = new MutableVarDecl(t, i, loc(tleft,tright)); :}
       ;
 
 type ::= INTTYPE
