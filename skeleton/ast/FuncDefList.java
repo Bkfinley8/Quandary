@@ -19,11 +19,10 @@ public class FuncDefList extends ASTNode {
         return this.rest;
     }
 
-    public boolean isEmpty(){
-        return this.first == null;
-    }
-    
-    public boolean hasNext(){
-        return this.rest != null;
+    public FuncDef lookFuncDef(String name){
+        if(first.getReturnDecl().getIdentifier().equals(name)){
+            return first;
+        }
+        return rest.lookFuncDef(name);
     }
 }

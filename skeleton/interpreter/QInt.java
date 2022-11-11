@@ -5,4 +5,8 @@ class QInt extends QVal{
     public QInt(long val){
         this.val = val;
     }
+
+    public long getVal(){
+        return this.val;
+    }
 }

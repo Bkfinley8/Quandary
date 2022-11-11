@@ -40,12 +40,13 @@ non terminal Condition       cond;
 non terminal Statement       stmt;
 non terminal StatementList   stmtList;
 non terminal VarDecl         varDecl;
+non terminal MutableVarDecl  varDecl;
 non terminal Integer         type;
 non terminal FuncDef         funcDef;
 non terminal FuncDefList     funcDefList;
 non terminal FormalDeclList  formalDeclList;
-non terminal NEmptyFormalDeclList  neFormalDeclList;
-non terminal NEmptyExprList      neExprList;
+non terminal FormalDeclList  neFormalDeclList;
+non terminal ExprList        neExprList;
 non terminal ExprList        exprList;
 
 precedence left PRINT;
@@ -76,6 +77,8 @@ funcDef ::= varDecl:v1 LPAREN formalDeclList:fdl RPAREN LCURLY stmtList:sl RCURL
 
 varDecl ::= type:t IDENT:i
          {: RESULT = new VarDecl(t, i, loc(tleft,tright)); :}
+      |  MUTABLE type:t IDENT:i
+         {: RESULT = new MutableVarDecl(t, i, loc(tleft,tright)); :}
       ;
 
 type ::= INTTYPE
@@ -87,16 +90,16 @@ type ::= INTTYPE
    ;
 
 formalDeclList ::= neFormalDeclList:nfdl
-         {: RESULT = new FormalDeclList(nfdl, loc(nfdlleft,nfdlright)); :}
+         {: RESULT = nfdl; :}
       | /* empty */
          /* might be wrong? */
          {: RESULT = null; :}
       ;
 
 neFormalDeclList ::= varDecl:vd COMMA neFormalDeclList:fdl
-         {: RESULT = new NEmptyFormalDeclList(vd,fdl,loc(vdleft,vdright)); :}
+         {: RESULT = new FormalDeclList(vd,fdl,loc(vdleft,vdright)); :}
       | varDecl:vd
-         {: RESULT = new NEmptyFormalDeclList(vd,null,loc(vdleft,vdright)); :}
+         {: RESULT = new FormalDeclList(vd,null,loc(vdleft,vdright)); :}
       ;      
 
 stmtList ::= stmt:s stmtList:sl
@@ -122,16 +125,16 @@ stmt ::= RETURN expr:e SEMI
       ;
 
 exprList ::= neExprList:nel
-         {: RESULT = new ExprList(nel, loc(nelleft, nelright)); :}
+         {: RESULT = nel; :}
       |  /* empty */
       /* might be wrong? */
          {: RESULT = null; :}
       ;
 
 neExprList ::= expr:e COMMA neExprList:nel
-         {: RESULT = new NEmptyExprList(e,nel,loc(eleft,eright)); :}
+         {: RESULT = new ExprList(e,nel,loc(eleft,eright)); :}
       |  expr:e
-         {: RESULT = new NEmptyExprList(e,null,loc(eleft,eright));; :}
+         {: RESULT = new ExprList(e,null,loc(eleft,eright));; :}
       ;
 
 expr ::= INTCONST:c

@@ -108,7 +108,7 @@ public class Interpreter {
             // Nothing to do
         }
     }
-
+/* 
     Object executeRoot(Program astRoot, long arg) {
         FuncDefList list = astRoot.getList();
         populateFuncDef(list);
@@ -121,7 +121,15 @@ public class Interpreter {
         throw new RuntimeException("No Main function");
         }      
     }
+*/
 
+    Object executeRoot(Program astRoot, long arg){
+        FuncDef mainFuncDef = astRoot.getList().lookFuncDef("main");
+        HashMap<String,Object> mainEnv = new HashMap<String,Object>();
+        mainEnv.put(mainFuncDef.getFormalDeclList().getFirst().getIdentifier(),arg);
+        return execute(mainFuncDef.getStatementList(), mainEnv);
+    }
+/* 
     void populateFuncDef(FuncDefList list){
         FuncDefList currentList = list;
         while(!currentList.isEmpty()){
@@ -187,7 +195,57 @@ public class Interpreter {
             throw new RuntimeException("Unhandled Statement type");
         }
     }
+*/
 
+Object execute(Statement stmt, HashMap<String, Object> varMap){
+    if(stmt instanceof StatementList){
+        StatementList temp = (StatementList) stmt;
+        Object retVal = execute(temp.getStatement(), varMap);
+        if(retVal != null){
+            return retVal;
+        } else {
+            return execute(temp.getNextStatement(), varMap);
+        }
+    } else if(stmt instanceof VarDeclarationStatement){
+        VarDeclarationStatement temp = (VarDeclarationStatement)stmt;
+        VarDecl var = temp.getVarDecl();
+        Expr expr = temp.getExpr();
+        varMap.put(var.getIdentifier(), evaluate(expr, varMap));
+        return null;
+    } else if(stmt instanceof IfStatement){
+        IfStatement temp = (IfStatement) stmt;
+        Condition cond = temp.getCondition();
+        Statement ifStatement = temp.getStatement();
+        if(evalCondition(cond,varMap)){
+            return execute(ifStatement,varMap);
+        } 
+        return null;
+    } else if(stmt instanceof IfElseStatement){
+        IfElseStatement temp = (IfElseStatement) stmt;
+        Condition cond = temp.getCondition();
+        Statement ifStatement = temp.getIfStatement();
+        Statement elseStatement = temp.getElseStatement();
+        if(evalCondition(cond,varMap)){
+            return execute(ifStatement, varMap);
+        } else {
+            return execute(elseStatement, varMap);
+        }
+    } else if(stmt instanceof ReturnStatement){
+        ReturnStatement temp = (ReturnStatement) stmt;
+        Expr expr = temp.getExpr();
+        return evaluate(expr, varMap);
+    } else if(stmt instanceof PrintStatement){
+        PrintStatement temp = (PrintStatement) stmt; 
+        Expr expr = temp.getExpr();
+        System.out.println(evaluate(expr, varMap));
+        return null;
+    } else if(stmt instanceof StatementList){
+        StatementList temp = (StatementList) stmt;
+        return execute(temp, varMap);
+    } else {
+        throw new RuntimeException("Unhandled Statement type");
+    }
+}
  
 
     boolean evalCondition(Condition cond, HashMap<String, Object> varMap){
@@ -247,19 +305,21 @@ public class Interpreter {
             String varName = temp.getIdentifier();
             return varMap.get(varName);
         } else if(expr instanceof FuncExpr) {
+            /* 
+
             FuncExpr temp = (FuncExpr)expr;
             String ident = temp.getIdent();
             ExprList list = temp.getExprList();
             if(this.env.containsKey(ident)){
                 FuncDef func = this.env.get(ident);
                 HashMap<String,Object> vars = new HashMap<String,Object>();
-                NEmptyExprList exprList = null;
-                NEmptyFormalDeclList declList = null;
+                ExprList exprList = null;
+                FormalDeclList declList = null;
                 if(list != null){
-                    exprList = list.getList();
+                    exprList = list;
                 }
                 if(func.getFormalDeclList() != null){
-                    declList = func.getFormalDeclList().getList();
+                    declList = func.getFormalDeclList();
                 }
                 while(exprList != null){
                     Expr temp2 = exprList.getFirst();
@@ -272,12 +332,29 @@ public class Interpreter {
                         break;
                     }
                 }
-                return executeStmtList(func.getStatementList(), vars);
+                return execute(func.getStatementList(), vars);
             } else if(ident.equals("randomInt")){
-                return ThreadLocalRandom.current().nextLong((Long)evaluate(list.getList().getFirst(), varMap));
+                return ThreadLocalRandom.current().nextLong((Long)evaluate(list.getFirst(), varMap));
             } else {
                 throw new RuntimeException("Invalid function call");
             }
+            */
+            FuncExpr temp = (FuncExpr)expr;
+            if(temp.getIdent().equals("randomInt")){
+                return ThreadLocalRandom.current().nextLong((Long)evaluate(temp.getExprList().getFirst(), varMap));
+            } else {
+                FuncDef callee = astRoot.getList().lookFuncDef(temp.getIdent());
+                HashMap<String,Object> calleeEnv = new HashMap<String,Object>();
+                FormalDeclList currentFormalDeclList = callee.getFormalDeclList();
+                ExprList currExprList = temp.getExprList();
+                while(currentFormalDeclList != null){
+                    calleeEnv.put(currentFormalDeclList.getFirst().getIdentifier(),evaluate(currExprList.getFirst(),varMap));
+                    currentFormalDeclList = currentFormalDeclList.getRest();
+                    currExprList = currExprList.getRest();
+                }
+                return execute(callee.getStatementList(), calleeEnv);   
+            }
+    
         } else {
             throw new RuntimeException("Unhandled Expr type");
         }
