@@ -340,19 +340,17 @@ Object execute(Statement stmt, HashMap<String, Object> varMap){
             FuncExpr temp = (FuncExpr)expr;
             if(temp.getIdent().equals("randomInt")){
                 return ThreadLocalRandom.current().nextLong((Long)evaluate(temp.getExprList().getFirst(), varMap));
-            } else {
-                FuncDef callee = astRoot.getList().lookFuncDef(temp.getIdent());
-                HashMap<String,Object> calleeEnv = new HashMap<String,Object>();
-                FormalDeclList currentFormalDeclList = callee.getFormalDeclList();
-                ExprList currExprList = temp.getExprList();
-                while(currentFormalDeclList != null){
-                    calleeEnv.put(currentFormalDeclList.getFirst().getIdentifier(),evaluate(currExprList.getFirst(),varMap));
-                    currentFormalDeclList = currentFormalDeclList.getRest();
-                    currExprList = currExprList.getRest();
-                }
-                return execute(callee.getStatementList(), calleeEnv);   
             }
-    
+            FuncDef callee = astRoot.getList().lookFuncDef(temp.getIdent());
+            HashMap<String,Object> calleeEnv = new HashMap<String,Object>();
+            FormalDeclList currentFormalDeclList = callee.getFormalDeclList();
+            ExprList currExprList = temp.getExprList();
+            while(currentFormalDeclList != null){
+                calleeEnv.put(currentFormalDeclList.getFirst().getIdentifier(),evaluate(currExprList.getFirst(),varMap));
+                currentFormalDeclList = currentFormalDeclList.getRest();
+                currExprList = currExprList.getRest();
+            }  
+            return execute(callee.getStatementList(), calleeEnv); 
         } else {
             throw new RuntimeException("Unhandled Expr type");
         }
