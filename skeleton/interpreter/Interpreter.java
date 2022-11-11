@@ -87,14 +87,10 @@ public class Interpreter {
 
     final Program astRoot;
     final Random random;
-    boolean hasReturned;
-    HashMap<String,FuncDef> env;
 
     private Interpreter(Program astRoot) {
         this.astRoot = astRoot;
-        this.hasReturned = false;
         this.random = new Random();
-        this.env = new HashMap<String,FuncDef>();
     }
 
     void initMemoryManager(String gcType, long heapBytes) {
@@ -203,9 +199,11 @@ Object execute(Statement stmt, HashMap<String, Object> varMap){
         Object retVal = execute(temp.getStatement(), varMap);
         if(retVal != null){
             return retVal;
-        } else {
+        }
+        if(temp.getNextStatement() != null){
             return execute(temp.getNextStatement(), varMap);
         }
+        return null;
     } else if(stmt instanceof VarDeclarationStatement){
         VarDeclarationStatement temp = (VarDeclarationStatement)stmt;
         VarDecl var = temp.getVarDecl();
@@ -294,7 +292,7 @@ Object execute(Statement stmt, HashMap<String, Object> varMap){
                 case BinaryExpr.PLUS: return (Long)evaluate(binaryExpr.getLeftExpr(), varMap) + (Long)evaluate(binaryExpr.getRightExpr(), varMap);
                 case BinaryExpr.MINUS: return (Long)evaluate(binaryExpr.getLeftExpr(), varMap) - (Long)evaluate(binaryExpr.getRightExpr(), varMap);
                 case BinaryExpr.TIMES: return (Long)evaluate(binaryExpr.getLeftExpr(), varMap) * (Long)evaluate(binaryExpr.getRightExpr(), varMap);
-                case BinaryExpr.DOT: return new QRef(new QObj((QVal) evaluate(binaryExpr.getLeftExpr(),varMap),(QVal) evaluate(binaryExpr.getRightExpr(),varMap)));
+                //case BinaryExpr.DOT: return new QRef(new QObj((QVal) evaluate(binaryExpr.getLeftExpr(),varMap),(QVal) evaluate(binaryExpr.getRightExpr(),varMap)));
                 default: throw new RuntimeException("Unhandled operator");
             }
         } else if(expr instanceof UnaryExpr) {
