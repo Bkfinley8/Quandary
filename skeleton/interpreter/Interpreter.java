@@ -214,7 +214,7 @@ Object execute(Statement stmt, HashMap<String, Object> varMap){
         IfStatement temp = (IfStatement) stmt;
         Condition cond = temp.getCondition();
         Statement ifStatement = temp.getStatement();
-        if(evalCondition(cond,varMap)){
+        if(evaluate(cond,varMap)){
             return execute(ifStatement,varMap);
         } 
         return null;
@@ -223,7 +223,7 @@ Object execute(Statement stmt, HashMap<String, Object> varMap){
         Condition cond = temp.getCondition();
         Statement ifStatement = temp.getIfStatement();
         Statement elseStatement = temp.getElseStatement();
-        if(evalCondition(cond,varMap)){
+        if(evaluate(cond,varMap)){
             return execute(ifStatement, varMap);
         } else {
             return execute(elseStatement, varMap);
@@ -280,25 +280,25 @@ Object execute(Statement stmt, HashMap<String, Object> varMap){
         }
     }
     */
-    boolean evalCondition(Condition cond, HashMap<String, Object> varMap){
+    boolean evaluate(Condition cond, HashMap<String, Object> varMap){
         if(cond instanceof CondEval){
             CondEval temp = (CondEval)cond;
             Expr expr1 = temp.getExpr1();
             Expr expr2 = temp.getExpr2();
             switch (temp.getOperator()){
-                case CondEval.DOUBLE_EQUALS: return (Long)evaluate(expr1, varMap) == (Long)evaluate(expr2, varMap);
-                case CondEval.NOT_EQUALS: return (Long)evaluate(expr1, varMap) != (Long)evaluate(expr2, varMap);
-                case CondEval.LESS_THAN: return (Long)evaluate(expr1, varMap) < (Long)evaluate(expr2, varMap);
-                case CondEval.GREATER_THAN: return (Long)evaluate(expr1, varMap) > (Long)evaluate(expr2, varMap);
-                case CondEval.LESS_THAN_OR_EQUAL_TO: return (Long)evaluate(expr1, varMap) <= (Long)evaluate(expr2, varMap);
-                case CondEval.GREATER_THAN_OR_EQUAL_TO: return (Long)evaluate(expr1, varMap) >= (Long)evaluate(expr2, varMap);
+                case CondEval.DOUBLE_EQUALS: return (long)evaluate(expr1, varMap) == (long)evaluate(expr2, varMap);
+                case CondEval.NOT_EQUALS: return (long)evaluate(expr1, varMap) != (long)evaluate(expr2, varMap);
+                case CondEval.LESS_THAN: return (long)evaluate(expr1, varMap) < (long)evaluate(expr2, varMap);
+                case CondEval.GREATER_THAN: return (long)evaluate(expr1, varMap) > (long)evaluate(expr2, varMap);
+                case CondEval.LESS_THAN_OR_EQUAL_TO: return (long)evaluate(expr1, varMap) <= (long)evaluate(expr2, varMap);
+                case CondEval.GREATER_THAN_OR_EQUAL_TO: return (long)evaluate(expr1, varMap) >= (long)evaluate(expr2, varMap);
             }
         } else if(cond instanceof LogicalCond){
             LogicalCond temp = (LogicalCond)cond;
             switch(temp.getOperator()){
-                case LogicalCond.BOOL_AND: return evalCondition(temp.getCondition1(), varMap) && evalCondition(temp.getCondition2(), varMap);
-                case LogicalCond.BOOL_OR: return evalCondition(temp.getCondition1(), varMap) || evalCondition(temp.getCondition2(), varMap);
-                case LogicalCond.BOOL_NOT: return !evalCondition(temp.getCondition1(), varMap);
+                case LogicalCond.BOOL_AND: return evaluate(temp.getCondition1(), varMap) && evaluate(temp.getCondition2(), varMap);
+                case LogicalCond.BOOL_OR: return evaluate(temp.getCondition1(), varMap) || evaluate(temp.getCondition2(), varMap);
+                case LogicalCond.BOOL_NOT: return !evaluate(temp.getCondition1(), varMap);
             }
         }
         throw new RuntimeException();
@@ -310,9 +310,9 @@ Object execute(Statement stmt, HashMap<String, Object> varMap){
         } else if (expr instanceof BinaryExpr) {
             BinaryExpr binaryExpr = (BinaryExpr)expr;
             switch (binaryExpr.getOperator()) {
-                case BinaryExpr.PLUS: return (Long)evaluate(binaryExpr.getLeftExpr(), varMap) + (Long)evaluate(binaryExpr.getRightExpr(), varMap);
-                case BinaryExpr.MINUS: return (Long)evaluate(binaryExpr.getLeftExpr(), varMap) - (Long)evaluate(binaryExpr.getRightExpr(), varMap);
-                case BinaryExpr.TIMES: return (Long)evaluate(binaryExpr.getLeftExpr(), varMap) * (Long)evaluate(binaryExpr.getRightExpr(), varMap);
+                case BinaryExpr.PLUS: return (long)evaluate(binaryExpr.getLeftExpr(), varMap) + (long)evaluate(binaryExpr.getRightExpr(), varMap);
+                case BinaryExpr.MINUS: return (long)evaluate(binaryExpr.getLeftExpr(), varMap) - (long)evaluate(binaryExpr.getRightExpr(), varMap);
+                case BinaryExpr.TIMES: return (long)evaluate(binaryExpr.getLeftExpr(), varMap) * (long)evaluate(binaryExpr.getRightExpr(), varMap);
                 //case BinaryExpr.DOT: return new QRef(new QObj((QVal) evaluate(binaryExpr.getLeftExpr(),varMap),(QVal) evaluate(binaryExpr.getRightExpr(),varMap)));
                 default: throw new RuntimeException("Unhandled operator");
             }
