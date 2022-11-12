@@ -286,7 +286,7 @@ public class Interpreter {
             Condition cond = temp.getCondition();
             Statement ifStatement = temp.getStatement();
             while(evaluate(cond,varMap)){
-                return execute(ifStatement,varMap);
+                execute(ifStatement,varMap);
             } 
             return null;
         } else {

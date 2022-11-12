@@ -16,6 +16,14 @@ public class QObj {
         return this.right;
     }
 
+    public void setLeft(QVal val){
+        this.left = val;
+    }
+
+    public void setRight(QVal val){
+        this.right = val;  
+    }
+
     @Override
     public String toString(){
         String ret = "";
