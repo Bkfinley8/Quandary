@@ -424,15 +424,9 @@ public class Interpreter {
                 Expr arg = temp.getExprList().getFirst();
                 return (arg instanceof NilExpr) || (arg instanceof ConstExpr) ? new QInt (1) : new QInt(0);
             } else if(temp.getIdent().equals("left")){
-                if(temp.getExprList().getFirst() instanceof NilExpr){
-                    return null;
-                }
                 QRef arg = (QRef)evaluate(temp.getExprList().getFirst(),varMap);
                 return arg.getRef().getLeft();
             }  else if(temp.getIdent().equals("right")){
-                if(temp.getExprList().getFirst() instanceof NilExpr){
-                    return null;
-                }
                 QRef arg = (QRef)evaluate(temp.getExprList().getFirst(),varMap);
                 return arg.getRef().getRight();
             } if(temp.getIdent().equals("setLeft")){

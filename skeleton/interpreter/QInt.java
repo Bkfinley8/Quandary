@@ -1,7 +1,7 @@
 package interpreter;
 
 class QInt extends QVal{
-    long val;
+    Long val;
     public QInt(long val){
         this.val = val;
     }
@@ -12,6 +12,9 @@ class QInt extends QVal{
 
     @Override
     public String toString(){
+        if(this.val == null){
+            return "nil";
+        }
         return String.valueOf(this.val);
     }
 
