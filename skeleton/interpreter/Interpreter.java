@@ -81,7 +81,13 @@ public class Interpreter {
         //astRoot.println(System.out);
         interpreter = new Interpreter(astRoot);
         interpreter.initMemoryManager(gcType, heapBytes);
-        String returnValueAsString = interpreter.executeRoot(astRoot, quandaryArg).toString();
+        QVal ret = interpreter.executeRoot(astRoot, quandaryArg);
+        String returnValueAsString = "";
+        if(ret == null){
+            returnValueAsString = "nil";
+        } else {
+            returnValueAsString = ret.toString();
+        }
         System.out.println("Interpreter returned " + returnValueAsString);
     }
 

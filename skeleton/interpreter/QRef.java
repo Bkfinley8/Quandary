@@ -12,6 +12,9 @@ class QRef extends QVal {
 
     @Override
     public String toString(){
+        if(this.referent == null){
+            return "nil";
+        }
         return this.referent.toString();
     }
 }
