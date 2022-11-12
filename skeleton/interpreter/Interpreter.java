@@ -434,6 +434,7 @@ public class Interpreter {
                 return arg.getRef().getLeft();
             }  else if(temp.getIdent().equals("right")){
                 QRef arg = (QRef)evaluate(temp.getExprList().getFirst(),varMap);
+                System.out.println(arg.getRef().toString());
                 return arg.getRef().getRight();
             } if(temp.getIdent().equals("setLeft")){
                 Expr arg1 = temp.getExprList().getFirst();
