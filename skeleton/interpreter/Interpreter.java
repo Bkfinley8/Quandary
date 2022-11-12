@@ -284,12 +284,15 @@ public class Interpreter {
         } else if(stmt instanceof WhileStatement) {
             WhileStatement temp = (WhileStatement) stmt;
             Condition cond = temp.getCondition();
-            Statement whileStatement = temp.getStatement();
+            Statement ifStatement = temp.getStatement();
             QVal ret = null;
             while(evaluate(cond,varMap)){
-                ret = execute(whileStatement,varMap);
+                ret = execute(ifStatement,varMap);
+                if(ret != null){
+                    return ret;
+                }
             } 
-            return ret;
+            return null;
         } else {
             throw new RuntimeException("Unhandled Statement type");
         }
