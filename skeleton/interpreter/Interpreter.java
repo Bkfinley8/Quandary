@@ -284,10 +284,10 @@ public class Interpreter {
         } else if(stmt instanceof WhileStatement) {
             WhileStatement temp = (WhileStatement) stmt;
             Condition cond = temp.getCondition();
-            Statement ifStatement = temp.getStatement();
+            Statement whileStatement = temp.getStatement();
             QVal ret = null;
             while(evaluate(cond,varMap)){
-                ret = execute(ifStatement,varMap);
+                ret = execute(whileStatement,varMap);
             } 
             return ret;
         } else {
