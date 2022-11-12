@@ -1,12 +1,20 @@
-Q main(int arg){
-    mutable int a = 0;
-    while(a < 3) {
-        print a;
-        a = a + 1;
-        if(a == 2){
-            return 100000;
-        }
-    }
+mutable Q main(int arg){
+    mutable Ref list = nil;
+    return isAtom(2.3);
+    list = add(list, 4);
 
-    return 99;
+
+    return arg;
+}
+
+mutable Ref add(Ref list, Q elem) {
+  if (isNil(list) != 0) {
+    return elem . nil;
+  }
+  mutable Ref curr = list;
+  while (isNil(right(curr)) == 0) {
+    curr = (Ref)right(curr);
+  }
+  setRight(curr, elem . nil);
+  return list;
 }

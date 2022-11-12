@@ -425,16 +425,15 @@ public class Interpreter {
                 return new QInt(ThreadLocalRandom.current().nextLong(val));
             } else if(temp.getIdent().equals("isNil")){
                 Expr arg = temp.getExprList().getFirst();
-                return arg instanceof NilExpr ? new QInt (1) : new QInt(0);
+                return evaluate(arg,varMap) == null ? new QInt (1) : new QInt(0);
             } else if(temp.getIdent().equals("isAtom")){
                 Expr arg = temp.getExprList().getFirst();
-                return (arg instanceof NilExpr) || (arg instanceof ConstExpr) ? new QInt (1) : new QInt(0);
+                return ((evaluate(arg,varMap) == null) || (arg instanceof ConstExpr)) ? new QInt (1) : new QInt(0);
             } else if(temp.getIdent().equals("left")){
                 QRef arg = (QRef)evaluate(temp.getExprList().getFirst(),varMap);
                 return arg.getRef().getLeft();
             }  else if(temp.getIdent().equals("right")){
                 QRef arg = (QRef)evaluate(temp.getExprList().getFirst(),varMap);
-                System.out.println(arg.getRef().toString());
                 return arg.getRef().getRight();
             } if(temp.getIdent().equals("setLeft")){
                 Expr arg1 = temp.getExprList().getFirst();

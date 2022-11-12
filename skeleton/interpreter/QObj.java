@@ -26,6 +26,9 @@ public class QObj {
 
     @Override
     public String toString(){
+        if(this.right == null){
+            return "(" + this.left.toString() + " . " + "nil)";
+        }
         String ret = "";
         ret = "(" + this.left.toString() + " . " + this.right.toString() + ")";
         return ret;
