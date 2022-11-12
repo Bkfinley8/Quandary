@@ -75,7 +75,9 @@ funcDef ::= varDecl:v1 LPAREN formalDeclList:fdl RPAREN LCURLY stmtList:sl RCURL
       ;
 
 varDecl ::= type:t IDENT:i
-         {: RESULT = new VarDecl(t, i, loc(tleft,tright)); :}
+         {: RESULT = new VarDecl(t, i, 0, loc(tleft,tright)); :}
+      |  MUTABLE type:t IDENT:i
+         {: RESULT = new VarDecl(t, i, 1, loc(tleft,tright)); :}
       ;
 
 type ::= INTTYPE
@@ -119,6 +121,10 @@ stmt ::= RETURN expr:e SEMI
          {: RESULT = sl; :}
       |  WHILE cond:c stmt:s
          {: RESULT = new WhileStatement(c, s, loc(cleft, cright)); :}
+      |  IDENT:i EQUALS expr:e SEMI
+         {: RESULT = new UpdateStatement(i, e, loc(ileft, iright)); :}
+      |  IDENT:i LPAREN exprList:el RPAREN SEMI
+         {: RESULT = new CallStatement(i, el, loc(ileft, iright)); :}
       ;
 
 exprList ::= neExprList:nel
@@ -149,8 +155,8 @@ expr ::= INTCONST:c
          {: RESULT = new FuncExpr(i,el,loc(ileft,iright)); :}
       |  NIL
          {: RESULT = new NilExpr(); :}
-      |  LPAREN type RPAREN expr:e
-         {: RESULT = new CastExpr(type,e,loc(eleft,eright)); :}
+      |  LPAREN type:t RPAREN expr:e
+         {: RESULT = new CastExpr(t,e,loc(eleft,eright)); :}
       ;
 
 cond ::= expr:e1 LESSTHANOREQUALTO expr:e2

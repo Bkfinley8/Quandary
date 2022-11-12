@@ -237,6 +237,49 @@ public class Interpreter {
             Expr expr = temp.getExpr();
             System.out.println(evaluate(expr, varMap));
             return null;
+        } else if(stmt instanceof UpdateStatement){
+            UpdateStatement temp = (UpdateStatement) stmt;
+            String ident = temp.getIdent();
+            Expr expr = temp.getExpr();
+            varMap.replace(ident, evaluate(expr, varMap));
+            return null;
+        } else if(stmt instanceof CallStatement){
+            CallStatement temp = (CallStatement)stmt;
+            if(temp.getIdent().equals("randomInt")){
+                long val = ((QInt)evaluate(temp.getExprList().getFirst(), varMap)).getVal();
+                return new QInt(ThreadLocalRandom.current().nextLong(val));
+            } else if(temp.getIdent().equals("isNil")){
+                Expr arg = temp.getExprList().getFirst();
+                return arg instanceof NilExpr ? new QInt (1) : new QInt(0);
+            } else if(temp.getIdent().equals("isAtom")){
+                Expr arg = temp.getExprList().getFirst();
+                return (arg instanceof NilExpr) || (arg instanceof ConstExpr) ? new QInt (1) : new QInt(0);
+            } else if(temp.getIdent().equals("left")){
+                QRef arg = (QRef)evaluate(temp.getExprList().getFirst(),varMap);
+                return arg.getRef().getLeft();
+            }  else if(temp.getIdent().equals("right")){
+                QRef arg = (QRef)evaluate(temp.getExprList().getFirst(),varMap);
+                return arg.getRef().getRight();
+            }
+            FuncDef callee = astRoot.getList().lookFuncDef(temp.getIdent());
+            HashMap<String,QVal> calleeEnv = new HashMap<String,QVal>();
+            FormalDeclList currentFormalDeclList = callee.getFormalDeclList();
+            ExprList currExprList = temp.getExprList();
+            while(currentFormalDeclList != null){
+                calleeEnv.put(currentFormalDeclList.getFirst().getIdentifier(),evaluate(currExprList.getFirst(),varMap));
+                currentFormalDeclList = currentFormalDeclList.getRest();
+                currExprList = currExprList.getRest();
+            }
+            execute(callee.getStatementList(), calleeEnv);   
+            return null;
+        } else if(stmt instanceof WhileStatement) {
+            WhileStatement temp = (WhileStatement) stmt;
+            Condition cond = temp.getCondition();
+            Statement ifStatement = temp.getStatement();
+            while(evaluate(cond,varMap)){
+                return execute(ifStatement,varMap);
+            } 
+            return null;
         } else {
             throw new RuntimeException("Unhandled Statement type");
         }
@@ -386,6 +429,20 @@ public class Interpreter {
             return execute(callee.getStatementList(), calleeEnv); 
         } else if(expr instanceof NilExpr){
             return null;
+        } else if(expr instanceof CastExpr){
+            //Not 100% sure this is right
+            CastExpr temp = (CastExpr)expr;
+            int type = temp.getType();
+            Expr expr2 = temp.getExpr();
+            QVal ret = evaluate(expr2,varMap);
+            if(type == 1){
+                return (QInt) ret;
+            } else if(type == 2){
+                return (QVal) ret;
+            } else {
+                return (QRef) ret;
+            }
+
         } else {
             throw new RuntimeException("Unhandled Expr type");
         }
