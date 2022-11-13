@@ -254,18 +254,10 @@ public class Interpreter {
             if(temp.getIdent().equals("setLeft")){
                 Expr arg1 = temp.getExprList().getFirst();
                 QVal arg2 = evaluate(temp.getExprList().getRest().getFirst(),varMap);
-                if(arg1 instanceof BinaryExpr){
-                    
-                } else {
-                    String ident = ((IdentExpr)arg1).getIdentifier();
-                    QRef ref = (QRef)varMap.get(ident);
-                    QObj obj = ref.getRef();
-                    obj.setLeft(arg2);
-                }
-                return null;
-            } else if(temp.getIdent().equals("setRight")){
-                Expr arg1 = temp.getExprList().getFirst();
-                QVal arg2 = evaluate(temp.getExprList().getRest().getFirst(),varMap);
+
+                QObj obj = ((QRef)evaluate(arg1,varMap)).getRef();
+                obj.setLeft(arg2);
+                /* 
                 if(arg1 instanceof BinaryExpr){
                     
                 } else {
@@ -274,6 +266,24 @@ public class Interpreter {
                     QObj obj = ref.getRef();
                     obj.setRight(arg2);
                 }
+                */
+                return null;
+            } else if(temp.getIdent().equals("setRight")){
+                Expr arg1 = temp.getExprList().getFirst();
+                QVal arg2 = evaluate(temp.getExprList().getRest().getFirst(),varMap);
+
+                QObj obj = ((QRef)evaluate(arg1,varMap)).getRef();
+                obj.setRight(arg2);
+                /* 
+                if(arg1 instanceof BinaryExpr){
+                    
+                } else {
+                    String ident = ((IdentExpr)arg1).getIdentifier();
+                    QRef ref = (QRef)varMap.get(ident);
+                    QObj obj = ref.getRef();
+                    obj.setRight(arg2);
+                }
+                */
                 return null;
             }
             FuncDef callee = astRoot.getList().lookFuncDef(temp.getIdent());
@@ -438,26 +448,36 @@ public class Interpreter {
             } if(temp.getIdent().equals("setLeft")){
                 Expr arg1 = temp.getExprList().getFirst();
                 QVal arg2 = evaluate(temp.getExprList().getRest().getFirst(),varMap);
+
+                QObj obj = ((QRef)evaluate(arg1,varMap)).getRef();
+                obj.setLeft(arg2);
+                /* 
                 if(arg1 instanceof BinaryExpr){
                     
                 } else {
                     String ident = ((IdentExpr)arg1).getIdentifier();
                     QRef ref = (QRef)varMap.get(ident);
                     QObj obj = ref.getRef();
-                    obj.setLeft(arg2);
+                    obj.setRight(arg2);
                 }
+                */
                 return new QInt(1);
             } else if(temp.getIdent().equals("setRight")){
                 Expr arg1 = temp.getExprList().getFirst();
                 QVal arg2 = evaluate(temp.getExprList().getRest().getFirst(),varMap);
+
+                QObj obj = ((QRef)evaluate(arg1,varMap)).getRef();
+                obj.setRight(arg2);
+                /* 
                 if(arg1 instanceof BinaryExpr){
                     
                 } else {
                     String ident = ((IdentExpr)arg1).getIdentifier();
                     QRef ref = (QRef)varMap.get(ident);
                     QObj obj = ref.getRef();
-                    obj.setLeft(arg2);
+                    obj.setRight(arg2);
                 }
+                */
                 return new QInt(1);
             }
             FuncDef callee = astRoot.getList().lookFuncDef(temp.getIdent());
