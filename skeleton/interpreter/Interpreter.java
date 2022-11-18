@@ -438,7 +438,7 @@ public class Interpreter {
                 return evaluate(arg,varMap) == null ? new QInt (1) : new QInt(0);
             } else if(temp.getIdent().equals("isAtom")){
                 Expr arg = temp.getExprList().getFirst();
-                return (evaluate(arg,varMap) == null) || evaluate(arg,varMap) instanceof QInt ? new QInt (1) : new QInt(0);
+                return ((evaluate(arg,varMap) == null) || (arg instanceof ConstExpr)) ? new QInt (1) : new QInt(0);
             } else if(temp.getIdent().equals("left")){
                 QRef arg = (QRef)evaluate(temp.getExprList().getFirst(),varMap);
                 return arg.getRef().getLeft();
