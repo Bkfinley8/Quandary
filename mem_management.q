@@ -1,6 +1,6 @@
 Q int main(int arg){
     if(arg == 1){
-        int i = 0;
+        mutable int i = 0;
         Ref list = 0 . 0;
         Ref temp = list;
         while(i < 17){
@@ -11,42 +11,15 @@ Q int main(int arg){
     } else if(arg == 2){
         Ref a;
         Ref b;
-        a =  1.1;  /* 1 */
-        b = 2.2;
-        setRight(a,b);
-        setRight(b,a);
-        a =  1.1;       /* 2 */
-        b = 2.2;
-        setRight(a,b);
-        setRight(b,a);
-        a =  1.1;       /* 3 */
-        b = 2.2;
-        setRight(a,b);
-        setRight(b,a);
-        a =  1.1;           /* 4 */
-        b = 2.2;
-        setRight(a,b);
-        setRight(b,a);
-        a =  1.1;           /* 5 */
-        b = 2.2;
-        setRight(a,b);
-        setRight(b,a);
-        a =  1.1;           /* 6 */
-        b = 2.2;
-        setRight(a,b);
-        setRight(b,a);
-        a =  1.1;           /* 7 */
-        b = 2.2;
-        setRight(a,b);
-        setRight(b,a);
-        a =  1.1;           /* 8 */
-        b = 2.2;
-        setRight(a,b);
-        setRight(b,a);
-        a =  1.1;           /* 9 */
-        b = 2.2;
-        setRight(a,b);
-        setRight(b,a);
+        mutable int i = 0;
+        while (i < 9){
+            a =  1.nil;
+            b = 2.nil;
+            setRight(a,b);
+            setRight(b,a);
+ 
+            i = i + 1;
+        }
     }  else if(arg == 3){
         int i = 0;
         Ref list = 0 . 0;
@@ -59,7 +32,16 @@ Q int main(int arg){
         Ref x = nil . 2;
         free(x);   
     }  else if(arg == 4){
-        
+        Ref a;
+        Ref b;
+        mutable int i = 0;
+        while (i < 9){
+            a =  1.nil;
+            b = 2.nil;
+            setRight(a,b);
+            setRight(b,a);
+            i = i + 1;
+        }
     }
     return 0;
 }
