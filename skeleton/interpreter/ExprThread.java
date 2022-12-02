@@ -5,12 +5,13 @@ import java.util.*;
 public class ExprThread extends Thread {
     Expr expr;
     QVal result;
-
-    public ExprThread(Expr expr){
+    HashMap<String, QVal> varMap;
+    public ExprThread(Expr expr, HashMap<String,QVal> varMap){
         this.expr = expr;
+        this.varMap = varMap;
     }
 
-    public void run(HashMap<String, QVal> varMap){
+    public void run(){
         result = Interpreter.getInterpreter().evaluate(expr, varMap);
     }
 
