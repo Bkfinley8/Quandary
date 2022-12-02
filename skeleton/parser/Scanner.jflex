@@ -92,7 +92,8 @@ white_space = {new_line} | [ \t\f]
 "Ref"               { return symbol("Ref",  REF); }
 "while"               { return symbol("while",  WHILE); }
 "nil"               { return symbol("nil",  NIL); }
-
+"LBRACKET"               { return symbol("[",  LBRACKET); }
+"RBRACKET"               { return symbol("]",  RBRACKET); }
 
 
 {StringLiteral}   { return symbol("Ident", IDENT, new String(yytext())); }

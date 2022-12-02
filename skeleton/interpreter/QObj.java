@@ -1,8 +1,10 @@
 package interpreter;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class QObj {
     QVal left;
     QVal right;
+    AtomicBoolean lock = new AtomicBoolean(false);
     public QObj(QVal l, QVal r){
         this.left = l;
         this.right = r;
@@ -22,6 +24,10 @@ public class QObj {
 
     public void setRight(QVal val){
         this.right = val;  
+    }
+
+    public AtomicBoolean getLock(){
+        return lock;
     }
 
     @Override

@@ -27,7 +27,7 @@ parser code {:
 
 :};
 
-terminal PLUS, MINUS, TIMES, LPAREN, RPAREN, LCURLY, RCURLY, RETURN, PRINT, SEMI, INTTYPE, IF, ELSE, LESSTHAN, LESSTHANOREQUALTO, GREATERTHAN, GREATERTHANOREQUALTO, DOUBLEEQUALS, NOTEQUALS, NOT, AND, OR, EQUALS, COMMA, DOT, MUTABLE,Q, REF, WHILE,UMINUS, NIL;
+terminal PLUS, MINUS, TIMES, LPAREN, RPAREN, LCURLY, RCURLY, RETURN, PRINT, SEMI, INTTYPE, IF, ELSE, LESSTHAN, LESSTHANOREQUALTO, GREATERTHAN, GREATERTHANOREQUALTO, DOUBLEEQUALS, NOTEQUALS, NOT, AND, OR, EQUALS, COMMA, DOT, MUTABLE,Q, REF, WHILE,UMINUS, NIL, LBRACKET, RBRACKET;
 
 
 terminal Long INTCONST;
@@ -157,6 +157,8 @@ expr ::= INTCONST:c
          {: RESULT = new NilExpr(); :}
       |  LPAREN type:t RPAREN expr:e
          {: RESULT = new CastExpr(t,e,loc(eleft,eright)); :}
+      | LBRACKET binaryExpr:e RBRACKET
+         {: RESULT = new ConcurrentExpr(e,loc(eleft,eright)); :}
       ;
 
 cond ::= expr:e1 LESSTHANOREQUALTO expr:e2
@@ -189,4 +191,5 @@ binaryExpr ::= expr:e1 PLUS expr:e2
             {: RESULT = new BinaryExpr(e1, BinaryExpr.TIMES, e2, loc(e1left, e1right)); :}
          |  expr:e1 DOT expr:e2
             {: RESULT = new BinaryExpr(e1, BinaryExpr.DOT, e2, loc(e1left, e1right)); :}
+         
          ;

@@ -6,6 +6,8 @@ import java.text.Normalizer.Form;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import parser.ParserWrapper;
 import ast.*;
 import java.util.Random;
@@ -285,6 +287,20 @@ public class Interpreter {
                 }
                 */
                 return null;
+            }  else if(temp.getIdent().equals("acq")){
+                Expr arg1 = temp.getExprList().getFirst();
+                QObj obj = ((QRef)evaluate(arg1,varMap)).getRef();
+                AtomicBoolean lock = obj.getLock();
+                while(!(lock.compareAndSet(false, true))){
+                    return null;
+                }
+            } else if(temp.getIdent().equals("red")){
+                Expr arg1 = temp.getExprList().getFirst();
+                QObj obj = ((QRef)evaluate(arg1,varMap)).getRef();
+                AtomicBoolean lock = obj.getLock();
+                while(!(lock.compareAndSet(true, false))){
+                    return null;
+                }
             }
             FuncDef callee = astRoot.getList().lookFuncDef(temp.getIdent());
             HashMap<String,QVal> calleeEnv = new HashMap<String,QVal>();
@@ -479,6 +495,20 @@ public class Interpreter {
                 }
                 */
                 return new QInt(1);
+            } else if(temp.getIdent().equals("acq")){
+                Expr arg1 = temp.getExprList().getFirst();
+                QObj obj = ((QRef)evaluate(arg1,varMap)).getRef();
+                AtomicBoolean lock = obj.getLock();
+                while(!(lock.compareAndSet(false, true))){
+                    return new QInt(1);
+                }
+            } else if(temp.getIdent().equals("red")){
+                Expr arg1 = temp.getExprList().getFirst();
+                QObj obj = ((QRef)evaluate(arg1,varMap)).getRef();
+                AtomicBoolean lock = obj.getLock();
+                while(!(lock.compareAndSet(true, false))){
+                    return new QInt(1);
+                }
             }
             FuncDef callee = astRoot.getList().lookFuncDef(temp.getIdent());
             HashMap<String,QVal> calleeEnv = new HashMap<String,QVal>();
@@ -505,8 +535,30 @@ public class Interpreter {
             } else {
                 return (QRef) ret;
             }
+        } else if(expr instanceof ConcurrentExpr){
+            BinaryExpr temp = ((ConcurrentExpr)expr).getExpr();
+            ExprThread t1 = new ExprThread(temp.getLeftExpr());
+            ExprThread t2 = new ExprThread(temp.getRightExpr());
+            t1.start();
+            t2.start();
+            try{
+                t1.join();
+                t2.join();
+            } catch (InterruptedException ex) {  }
 
-        } else {
+            int op = temp.getOperator();
+            if(op == BinaryExpr.PLUS){
+                return new QInt(((QInt)t1.getResult()).getVal() + ((QInt)t2.getResult()).getVal());
+            } else if(op == BinaryExpr.MINUS){
+                return new QInt(((QInt)t1.getResult()).getVal() - ((QInt)t2.getResult()).getVal()); 
+            } else if(op == BinaryExpr.TIMES){
+                return new QInt(((QInt)t1.getResult()).getVal() * ((QInt)t2.getResult()).getVal()); 
+            } else if(op == BinaryExpr.DOT){
+                return new QRef(new QObj(t1.getResult(), t2.getResult()));
+            } else {
+                throw new RuntimeException("Unhandled Op type");
+            }
+        }else {
             throw new RuntimeException("Unhandled Expr type");
         }
     }
