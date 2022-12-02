@@ -537,8 +537,8 @@ public class Interpreter {
             }
         } else if(expr instanceof ConcurrentExpr){
             BinaryExpr temp = ((ConcurrentExpr)expr).getExpr();
-            ExprThread t1 = new ExprThread(temp.getLeftExpr());
-            ExprThread t2 = new ExprThread(temp.getRightExpr());
+            ExprThread t1 = new ExprThread(temp.getLeftExpr(),varMap);
+            ExprThread t2 = new ExprThread(temp.getRightExpr(),varMap);
             t1.start();
             t2.start();
             try{
